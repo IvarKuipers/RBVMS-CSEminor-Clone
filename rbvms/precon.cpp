@@ -24,7 +24,7 @@ void JacobianPreconditioner::SetOperator(const Operator &op)
       HypreParMatrix* Jpp = dynamic_cast<HypreParMatrix*>(&jacobian->GetBlock(1,1));
       HypreParMatrix *Jpp2 = const_cast<HypreParMatrix*>(Jpp);
     //  prec[1] = new HypreSmoother();//*Jpp);
-      prec[1] = new HypreILU();//*Jpp);
+      prec[1] = new HypreBoomerAMG();//*Jpp); This increases error massively. Also change sum parameters. Look at output from ILU, etc.
    }
 
    for (int i = 0; i < prec.Size(); ++i)
