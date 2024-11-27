@@ -17,7 +17,7 @@ void JacobianPreconditioner::SetOperator(const Operator &op)
 
    if (prec[0] == nullptr)
    {
-      prec[0] = new HypreBoomerAMG();//*Jpp);new HypreSmoother();//HypreILU()
+      prec[0] = new HypreILU();//*Jpp);new HypreSmoother();//HypreILU()
    }
    if (prec[1] == nullptr)
    {
