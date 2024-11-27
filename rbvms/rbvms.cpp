@@ -217,17 +217,28 @@ int main(int argc, char *argv[])
    // Set up the preconditioner
    RBVMS::JacobianPreconditioner jac_prec(bOffsets);
 
-   // Set up the Jacobian solver
-   RBVMS::GeneralResidualMonitor j_monitor(MPI_COMM_WORLD,"\t\tFGMRES", 25);
-   FGMRESSolver j_gmres(MPI_COMM_WORLD);
-   j_gmres.iterative_mode = false;
-   j_gmres.SetRelTol(GMRES_RelTol);
-   j_gmres.SetAbsTol(1e-12);
-   j_gmres.SetMaxIter(GMRES_MaxIter);
-   j_gmres.SetPrintLevel(-1);
-   j_gmres.SetMonitor(j_monitor);
-   j_gmres.SetPreconditioner(jac_prec);
+   // // Set up the Jacobian solver
+   // RBVMS::GeneralResidualMonitor j_monitor(MPI_COMM_WORLD,"\t\tFGMRES", 25);
+   // FGMRESSolver j_gmres(MPI_COMM_WORLD);
+   // j_gmres.iterative_mode = false;
+   // j_gmres.SetRelTol(GMRES_RelTol);
+   // j_gmres.SetAbsTol(1e-12);
+   // j_gmres.SetMaxIter(GMRES_MaxIter);
+   // j_gmres.SetPrintLevel(-1);
+   // j_gmres.SetMonitor(j_monitor);
+   // j_gmres.SetPreconditioner(jac_prec);
 
+   RBVMS::GeneralResidualMonitor j_monitor(MPI_COMM_WORLD, "\t\tBiCGSTAB", 25);
+   BiCGSTABSolver j_bicgstab(MPI_COMM_WORLD);
+
+   // Set options for BiCGSTAB solver
+   j_bicgstab.iterative_mode = false;  // Whether to use iterative mode (typically false for direct)
+   j_bicgstab.SetRelTol(GMRES_RelTol);  // Relative tolerance (can be the same as FGMRES)
+   j_bicgstab.SetAbsTol(1e-12);         // Absolute tolerance (same as in your FGMRES setup)
+   j_bicgstab.SetMaxIter(GMRES_MaxIter); // Set max iterations for BiCGSTAB solver
+   j_bicgstab.SetPrintLevel(-1);        // No printing (you can adjust verbosity as needed)
+   j_bicgstab.SetMonitor(j_monitor);    // Set the residual monitor
+   j_bicgstab.SetPreconditioner(jac_prec); // Set the preconditioner (same as in FGMRES)
    // Set up the Newton solver
    RBVMS::SystemResidualMonitor newton_monitor(MPI_COMM_WORLD,
                                                "Newton", 1,
