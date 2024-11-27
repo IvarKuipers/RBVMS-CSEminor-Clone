@@ -250,7 +250,7 @@ int main(int argc, char *argv[])
    newton_solver.SetRelTol(Newton_RelTol);
    newton_solver.SetAbsTol(1e-12);
    newton_solver.SetMaxIter(Newton_MaxIter );
-   newton_solver.SetSolver(j_gmres);
+   newton_solver.SetSolver(j_bicgstab);
 
    // Define the physical parameters
    LibVectorCoefficient sol(dim, lib_file, "sol_u");
