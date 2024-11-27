@@ -28,9 +28,9 @@ void JacobianPreconditioner::SetOperator(const Operator &op)
 
       amg->SetPrintLevel(0);
       //8 i1-Jacobi smoother. Try 6 (symmetric gauss-seidel) next, afterwards 16 (ILU)
-      amg->SetRelaxType(8);
+      amg->SetRelaxType(16);
       //Aggressive coarsening
-      amg->SetStrengthThresh(0.01);
+      amg->SetStrengthThresh(0.1);
       //6 HMIS coarsening, try 8 next, may be better for non-symmetric problems
       amg->SetCoarsening(6);
       prec[1] = amg;//*Jpp);
