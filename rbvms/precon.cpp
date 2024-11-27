@@ -24,7 +24,16 @@ void JacobianPreconditioner::SetOperator(const Operator &op)
       HypreParMatrix* Jpp = dynamic_cast<HypreParMatrix*>(&jacobian->GetBlock(1,1));
       HypreParMatrix *Jpp2 = const_cast<HypreParMatrix*>(Jpp);
     //  prec[1] = new HypreSmoother();//*Jpp);
-      prec[1] = new HypreILU();//*Jpp); This increases error massively. Also change sum parameters. Look at output from ILU, etc.
+      HypreBoomerAMG *amg = new HypreBoomerAMG();
+
+      amg->SetPrintLevel(2);
+      //i1-Jacobi smoother. Try 6 (symmetric gauss-seidel) next, afterwards 16 (ILU)
+      amg->SetRelaxType(8);
+      //Aggressive coarsening
+      //amg->SetStrongThreshold(0.1);
+      //HMIS coarsening, try 8 next, may be better for non-symmetric problems
+      //amg->SetCoarseningStrategy(6);
+      prec[1] = amg;//*Jpp);
    }
 
    for (int i = 0; i < prec.Size(); ++i)
