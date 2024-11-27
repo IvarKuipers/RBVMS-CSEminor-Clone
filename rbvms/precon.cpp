@@ -27,8 +27,8 @@ void JacobianPreconditioner::SetOperator(const Operator &op)
       HypreBoomerAMG *amg = new HypreBoomerAMG();
 
       amg->SetPrintLevel(0);
-      //i1-Jacobi smoother. Try 6 (symmetric gauss-seidel) next, afterwards 16 (ILU)
-      amg->SetRelaxType(8);
+      //8 i1-Jacobi smoother. Try 6 (symmetric gauss-seidel) next, afterwards 16 (ILU)
+      amg->SetRelaxType(6);
       //Aggressive coarsening
       //amg->SetStrongThreshold(0.1);
       //HMIS coarsening, try 8 next, may be better for non-symmetric problems
