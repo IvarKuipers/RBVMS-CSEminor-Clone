@@ -319,6 +319,18 @@ void IncNavStoIntegrator::AssembleElementGrad(
    double ContinuityVelocityBlockTime = 0;
    double ContinuityPressureBlockTime = 0;
 
+   double ForloopIntroductionTimeSum = 0;
+   double MomentumVelocityBlockTimeSum = 0;
+   double MomentumPressureBlockTimeSum = 0;
+   double ContinuityVelocityBlockTimeSum = 0;
+   double ContinuityPressureBlockTimeSum = 0;
+
+   int ForloopIntroductionCounter = 0;
+   int MomentumVelocityBlockCounter = 0;
+   int MomentumPressureBlockCounter = 0;
+   int ContinuityVelocityBlockCounter = 0;
+   int ContinuityPressureBlockCounter = 0;
+
    for (int i = 0; i < ir.GetNPoints(); ++i)
    {
       // Start Measuring Time
@@ -388,7 +400,9 @@ void IncNavStoIntegrator::AssembleElementGrad(
       MultAtB(elf_u, shg_u, grad_u);
 
       auto TimeEnd2 = std::chrono::high_resolution_clock::now();
-      auto ForloopIntroductionTime = std::chrono::duration_cast<std::chrono::microseconds>(TimeEnd2 - TimeStart2).count();
+      ForloopIntroductionTime = std::chrono::duration_cast<std::chrono::microseconds>(TimeEnd2 - TimeStart2).count();
+      ForloopIntroductionTimeSum += ForloopIntroductionTime;
+      ForloopIntroductionCounter++;
 
       auto TimeStart3 = std::chrono::high_resolution_clock::now();
       // Momentum - Velocity block (w,u)
@@ -438,6 +452,8 @@ void IncNavStoIntegrator::AssembleElementGrad(
       }
       auto TimeEnd3 = std::chrono::high_resolution_clock::now();
       MomentumVelocityBlockTime = std::chrono::duration_cast<std::chrono::microseconds>(TimeEnd3 - TimeStart3).count();
+      MomentumVelocityBlockTimeSum += MomentumVelocityBlockTime;
+      MomentumVelocityBlockCounter++;
 
       auto TimeStart4 = std::chrono::high_resolution_clock::now();
       // Momentum - Pressure block (w,p)
@@ -455,6 +471,8 @@ void IncNavStoIntegrator::AssembleElementGrad(
       }
       auto TimeEnd4 = std::chrono::high_resolution_clock::now();
       MomentumPressureBlockTime = std::chrono::duration_cast<std::chrono::microseconds>(TimeEnd4 - TimeStart4).count();
+      MomentumPressureBlockTimeSum = += MomentumPressureBlockTime;
+      MomentumPressureBlockCounter++;
 
       auto TimeStart5 = std::chrono::high_resolution_clock::now();
       // Continuity - Velocity block (q,u)
@@ -473,21 +491,25 @@ void IncNavStoIntegrator::AssembleElementGrad(
       }
       auto TimeEnd5 = std::chrono::high_resolution_clock::now();
       ContinuityVelocityBlockTime = std::chrono::duration_cast<std::chrono::microseconds>(TimeEnd5 - TimeStart5).count();
+      ContinuityVelocityBlockTimeSum += ContinuityVelocityBlockTime;
+      ContinuityVelocityBlockCounter++;
 
       auto TimeStart6 = std::chrono::high_resolution_clock::now();
       // Continuity - Pressure block (w,p)
       AddMult_a_AAt(-w*tau_m*dt, shg_p, *elmats(1,1));
       auto TimeEnd6 = std::chrono::high_resolution_clock::now();
       ContinuityPressureBlockTime = std::chrono::duration_cast<std::chrono::microseconds>(TimeEnd4 - TimeStart4).count();
+      ContinuityPressureBlockTimeSum += ContinuityPressureBlockTime;
+      ContinuityPressureBlockCounter++;
    }
 
    std::cout << "---------------------- AEG  Profile -------------------" << std::endl;
-   std::cout << "Introduction Elapsed time: " << IntroductionTime << " microseconds" << std::endl;
-   std::cout << "For-loop Introduction Elapsed time: " << ForloopIntroductionTime << " microseconds" << std::endl;
-   std::cout << "Momentum Velocity Block Elapsed time: " << MomentumVelocityBlockTime << " microseconds" << std::endl;   
-   std::cout << "Momentum Pressure Block Elapsed time: " << MomentumPressureBlockTime << " microseconds" << std::endl;
-   std::cout << "Continuity Velocity Elapsed time: " << ContinuityVelocityBlockTime << " microseconds" << std::endl;
-   std::cout << "Continuity Pressure Elapsed time: " << ContinuityPressureBlockTime << " microseconds" << std::endl;
+   std::cout << "Introduction Elapsed time: " << IntroductionTime << " microseconds (1 call)" << std::endl;
+   std::cout << "For-loop Introduction Elapsed time: " << ForloopIntroductionTimeSum << " microseconds (" << ForloopIntroductionCounter << "calls)" << std::endl;
+   std::cout << "Momentum Velocity Block Elapsed time: " << MomentumVelocityBlockTimeSum << " microseconds (" << MomentumVelocityBlockCounter << "calls)" << std::endl;   
+   std::cout << "Momentum Pressure Block Elapsed time: " << MomentumPressureBlockTimeSum << " microseconds (" << MomentumPressureBlockCounter << "calls)" << std::endl;
+   std::cout << "Continuity Velocity Elapsed time: " << ContinuityVelocityBlockTimeSum << " microseconds (" << ContinuityVelocityBlockCounter << "calls)" << std::endl;
+   std::cout << "Continuity Pressure Elapsed time: " << ContinuityPressureBlockTimeSum << " microseconds (" << ContinuityPressureBlockCounter << "calls " << std::endl;
    std::cout << "--------------------- Next AEG call ---------------------\n" << std::endl;
 }
 
