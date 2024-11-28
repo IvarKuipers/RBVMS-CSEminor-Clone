@@ -25,9 +25,9 @@ void JacobianPreconditioner::SetOperator(const Operator &op)
       HypreParMatrix *Jpp2 = const_cast<HypreParMatrix*>(Jpp);
     //  prec[1] = new HypreSmoother();//*Jpp);
       HypreBoomerAMG *amg = nullptr;
-      amg = new HypreBoomerAMG(*Jpp2);
+      amg = new HypreBoomerAMG(*Jpp);
 
-      amg->SetPrintLevel(0);
+      amg->SetPrintLevel(1);
       //8 i1-Jacobi smoother. Try 6 (symmetric gauss-seidel) next, afterwards 16 (ILU)
       // amg->SetRelaxType(16);
       // //Aggressive coarsening
