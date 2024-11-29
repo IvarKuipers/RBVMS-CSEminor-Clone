@@ -26,7 +26,7 @@ void JacobianPreconditioner::SetOperator(const Operator &op)
     //  prec[1] = new HypreSmoother();//*Jpp);
       
       HypreBoomerAMG *amg = new HypreBoomerAMG();
-      amg->printlevel(0);
+      amg->SetPrintLevel(0);
       prec[1] = amg;//*Jpp);
    }
 
