@@ -24,7 +24,10 @@ void JacobianPreconditioner::SetOperator(const Operator &op)
       HypreParMatrix* Jpp = dynamic_cast<HypreParMatrix*>(&jacobian->GetBlock(1,1));
       HypreParMatrix *Jpp2 = const_cast<HypreParMatrix*>(Jpp);
     //  prec[1] = new HypreSmoother();//*Jpp);
-      prec[1] = new HypreILU();//*Jpp);
+      
+      HypreBoomerAMG *amg = new HypreBoomerAMG();
+      amg->printlevel(0);
+      prec[1] = amg;//*Jpp);
    }
 
    for (int i = 0; i < prec.Size(); ++i)
