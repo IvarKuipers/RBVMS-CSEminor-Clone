@@ -471,7 +471,7 @@ void IncNavStoIntegrator::AssembleElementGrad(
       }
       auto TimeEnd4 = std::chrono::high_resolution_clock::now();
       MomentumPressureBlockTime = std::chrono::duration_cast<std::chrono::microseconds>(TimeEnd4 - TimeStart4).count();
-      MomentumPressureBlockTimeSum = += MomentumPressureBlockTime;
+      MomentumPressureBlockTimeSum += MomentumPressureBlockTime;
       MomentumPressureBlockCounter++;
 
       auto TimeStart5 = std::chrono::high_resolution_clock::now();
