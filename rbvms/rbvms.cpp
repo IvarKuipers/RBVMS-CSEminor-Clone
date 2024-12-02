@@ -21,6 +21,7 @@
 #include "monitor.hpp"
 
 #include <sys/stat.h>
+#include <chrono>
 
 using namespace std;
 using namespace mfem;
@@ -441,7 +442,11 @@ int main(int argc, char *argv[])
 
       // Actual time step
       xp0 = xp;
+      auto newton_start = std::chrono::high_resolution_clock::now();
       ode_solver->Step(xp, t, dt);
+      auto newton_end = std::chrono::high_resolution_clock::now();
+      if (Mpi::Root())
+      {std::cout << "Time taken for one Time step:" << newton_start - newton_end << std::endl;}
       si++;
 
       // Postprocess solution
