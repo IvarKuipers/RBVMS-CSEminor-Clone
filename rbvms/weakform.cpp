@@ -324,6 +324,9 @@ void IncNavStoIntegrator::AssembleElementGrad(
    double MomentumPressureBlockTimeSum = 0;
    double ContinuityVelocityBlockTimeSum = 0;
    double ContinuityPressureBlockTimeSum = 0;
+   double MomentumVelocityBlockCounter1 = 0;
+   double MomentumVelocityBlockCounter2 = 0;
+   double MomentumVelocityBlockCounter3 = 0;
 
    int ForloopIntroductionCounter = 0;
    int MomentumVelocityBlockCounter = 0;
@@ -402,7 +405,6 @@ void IncNavStoIntegrator::AssembleElementGrad(
       auto TimeEnd2 = std::chrono::high_resolution_clock::now();
       ForloopIntroductionTime = std::chrono::duration_cast<std::chrono::microseconds>(TimeEnd2 - TimeStart2).count();
       ForloopIntroductionTimeSum += ForloopIntroductionTime;
-      ForloopIntroductionCounter++;
 
       auto TimeStart3 = std::chrono::high_resolution_clock::now();
       // Momentum - Velocity block (w,u)
@@ -415,6 +417,7 @@ void IncNavStoIntegrator::AssembleElementGrad(
             for (int dim_u = 0; dim_u < dim; ++dim_u)
             {
                mat += shg_u(i_u,dim_u)*shg_u(j_u,dim_u);
+               MomentumVelocityBlockCounter1++;
             }
             mat *= mu*dt;
 
@@ -437,6 +440,7 @@ void IncNavStoIntegrator::AssembleElementGrad(
                {
                   (*elmats(0,0))(i_u + i_dim*dof_u, j_u + j_dim*dof_u)
                   += mu*shg_u(i_u,j_dim)*shg_u(j_u,i_dim)*w*dt;
+                  MomentumVelocityBlockCounter2++;
                }
             }
             for (int i_dim = 0; i_dim < dim; ++i_dim)
@@ -445,6 +449,7 @@ void IncNavStoIntegrator::AssembleElementGrad(
                {
                   (*elmats(0,0))(i_u + i_dim*dof_u, j_u + j_dim*dof_u)
                   += tau_c*shg_u(i_u,i_dim)*shg_u(j_u,j_dim)*w*dt;
+                  MomentumVelocityBlockCounter3++;
                }
             }
 
@@ -453,7 +458,6 @@ void IncNavStoIntegrator::AssembleElementGrad(
       auto TimeEnd3 = std::chrono::high_resolution_clock::now();
       MomentumVelocityBlockTime = std::chrono::duration_cast<std::chrono::microseconds>(TimeEnd3 - TimeStart3).count();
       MomentumVelocityBlockTimeSum += MomentumVelocityBlockTime;
-      MomentumVelocityBlockCounter++;
 
       auto TimeStart4 = std::chrono::high_resolution_clock::now();
       // Momentum - Pressure block (w,p)
@@ -466,13 +470,14 @@ void IncNavStoIntegrator::AssembleElementGrad(
                (*elmats(0,1))(j_u + dof_u * dim_u, i_p)
                += (shg_p(i_p,dim_u)*tau_m*ushg_u(j_u)
                    - shg_u(j_u,dim_u)*sh_p(i_p))*w*dt;
+               MomentumPressureBlockCounter++;
             }
          }
       }
       auto TimeEnd4 = std::chrono::high_resolution_clock::now();
       MomentumPressureBlockTime = std::chrono::duration_cast<std::chrono::microseconds>(TimeEnd4 - TimeStart4).count();
       MomentumPressureBlockTimeSum += MomentumPressureBlockTime;
-      MomentumPressureBlockCounter++;
+      
 
       auto TimeStart5 = std::chrono::high_resolution_clock::now();
       // Continuity - Velocity block (q,u)
@@ -486,17 +491,19 @@ void IncNavStoIntegrator::AssembleElementGrad(
                -= sh_p(i_p)*shg_u(j_u,dim_u)*w*dt;
                (*elmats(1,0))(i_p, j_u + dof_u * dim_u)
                += shg_p(i_p, dim_u)*dupdu(j_u)*w;
+               ContinuityVelocityBlockCounter++;
             }
          }
       }
       auto TimeEnd5 = std::chrono::high_resolution_clock::now();
       ContinuityVelocityBlockTime = std::chrono::duration_cast<std::chrono::microseconds>(TimeEnd5 - TimeStart5).count();
       ContinuityVelocityBlockTimeSum += ContinuityVelocityBlockTime;
-      ContinuityVelocityBlockCounter++;
 
       auto TimeStart6 = std::chrono::high_resolution_clock::now();
+      
       // Continuity - Pressure block (w,p)
       AddMult_a_AAt(-w*tau_m*dt, shg_p, *elmats(1,1));
+
       auto TimeEnd6 = std::chrono::high_resolution_clock::now();
       ContinuityPressureBlockTime = std::chrono::duration_cast<std::chrono::microseconds>(TimeEnd4 - TimeStart4).count();
       ContinuityPressureBlockTimeSum += ContinuityPressureBlockTime;
@@ -509,7 +516,8 @@ void IncNavStoIntegrator::AssembleElementGrad(
    std::cout << "Momentum Velocity Block Elapsed time: " << MomentumVelocityBlockTimeSum << " microseconds (" << MomentumVelocityBlockCounter << "calls)" << std::endl;   
    std::cout << "Momentum Pressure Block Elapsed time: " << MomentumPressureBlockTimeSum << " microseconds (" << MomentumPressureBlockCounter << "calls)" << std::endl;
    std::cout << "Continuity Velocity Elapsed time: " << ContinuityVelocityBlockTimeSum << " microseconds (" << ContinuityVelocityBlockCounter << "calls)" << std::endl;
-   std::cout << "Continuity Pressure Elapsed time: " << ContinuityPressureBlockTimeSum << " microseconds (" << ContinuityPressureBlockCounter << "calls " << std::endl;
+   std::cout << "Continuity Pressure Elapsed time: " << ContinuityPressureBlockTimeSum << " microseconds (" << ContinuityPressureBlockCounter << "calls)" << std::endl;
+   std::cout << "Calls velocity block " << MomentumVelocityBlockCounter1 << MomentumVelocityBlockCounter2 << MomentumVelocityBlockCounter3 << std::endl;
    std::cout << "--------------------- Next AEG call ---------------------\n" << std::endl;
 }
 
