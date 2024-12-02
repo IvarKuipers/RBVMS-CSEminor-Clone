@@ -512,7 +512,7 @@ void IncNavStoIntegrator::AssembleElementGrad(
    std::cout << "---------------------- AEG  Profile -------------------" << std::endl;
    std::cout << "Introduction Elapsed time: " << IntroductionTime << " microseconds (1 call)" << std::endl;
    std::cout << "For-loop Introduction Elapsed time: " << ForloopIntroductionTimeSum << " microseconds (" << ForloopIntroductionCounter << "calls)" << std::endl;
-   std::cout << "Momentum Velocity Block Elapsed time: " << MomentumVelocityBlockTimeSum << " microseconds (" << MomentumVelocityBlockCounter1 << " & " MomentumVelocityBlockCounter2 << "calls)" << std::endl;   
+   std::cout << "Momentum Velocity Block Elapsed time: " << MomentumVelocityBlockTimeSum << " microseconds (" << MomentumVelocityBlockCounter1 << " & " << MomentumVelocityBlockCounter2 << "calls)" << std::endl;   
    std::cout << "Momentum Pressure Block Elapsed time: " << MomentumPressureBlockTimeSum << " microseconds (" << MomentumPressureBlockCounter << "calls)" << std::endl;
    std::cout << "Continuity Velocity Elapsed time: " << ContinuityVelocityBlockTimeSum << " microseconds (" << ContinuityVelocityBlockCounter << "calls)" << std::endl;
    std::cout << "Continuity Pressure Elapsed time: " << ContinuityPressureBlockTimeSum << " microseconds (" << ContinuityPressureBlockCounter << "calls)" << std::endl;
