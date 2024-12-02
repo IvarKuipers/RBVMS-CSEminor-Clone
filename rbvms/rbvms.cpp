@@ -445,9 +445,9 @@ int main(int argc, char *argv[])
       auto newton_start = std::chrono::high_resolution_clock::now();
       ode_solver->Step(xp, t, dt);
       auto newton_end = std::chrono::high_resolution_clock::now();
-      auto newton_duration = std::chrono::duration_cast<std::chrono::milliseconds>(newton_end - newton_start).count();
+      auto newton_duration = std::chrono::duration_cast<std::chrono::seconds>(newton_end - newton_start).count();
       if (Mpi::Root())
-      {std::cout << "Time taken for one Time step:" << newton_duration << std::endl;}
+      {std::cout << std::endl <<"Time taken for one Time step: " << newton_duration << " seconds"<<  std::endl;}
       si++;
 
       // Postprocess solution
