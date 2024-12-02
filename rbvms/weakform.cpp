@@ -449,7 +449,6 @@ void IncNavStoIntegrator::AssembleElementGrad(
                {
                   (*elmats(0,0))(i_u + i_dim*dof_u, j_u + j_dim*dof_u)
                   += tau_c*shg_u(i_u,i_dim)*shg_u(j_u,j_dim)*w*dt;
-                  MomentumVelocityBlockCounter3++;
                }
             }
 
@@ -513,11 +512,10 @@ void IncNavStoIntegrator::AssembleElementGrad(
    std::cout << "---------------------- AEG  Profile -------------------" << std::endl;
    std::cout << "Introduction Elapsed time: " << IntroductionTime << " microseconds (1 call)" << std::endl;
    std::cout << "For-loop Introduction Elapsed time: " << ForloopIntroductionTimeSum << " microseconds (" << ForloopIntroductionCounter << "calls)" << std::endl;
-   std::cout << "Momentum Velocity Block Elapsed time: " << MomentumVelocityBlockTimeSum << " microseconds (" << MomentumVelocityBlockCounter << "calls)" << std::endl;   
+   std::cout << "Momentum Velocity Block Elapsed time: " << MomentumVelocityBlockTimeSum << " microseconds (" << MomentumVelocityBlockCounter1 << " & " MomentumVelocityBlockCounter2 << "calls)" << std::endl;   
    std::cout << "Momentum Pressure Block Elapsed time: " << MomentumPressureBlockTimeSum << " microseconds (" << MomentumPressureBlockCounter << "calls)" << std::endl;
    std::cout << "Continuity Velocity Elapsed time: " << ContinuityVelocityBlockTimeSum << " microseconds (" << ContinuityVelocityBlockCounter << "calls)" << std::endl;
    std::cout << "Continuity Pressure Elapsed time: " << ContinuityPressureBlockTimeSum << " microseconds (" << ContinuityPressureBlockCounter << "calls)" << std::endl;
-   std::cout << "Calls velocity block " << MomentumVelocityBlockCounter1 << MomentumVelocityBlockCounter2 << MomentumVelocityBlockCounter3 << std::endl;
    std::cout << "--------------------- Next AEG call ---------------------\n" << std::endl;
 }
 
