@@ -101,7 +101,7 @@ void SystemResidualMonitor::MonitorResidual(int it,
          mfem::out<<std::setw(8)<<std::defaultfloat<<std::setprecision(4)
                   <<vnorm[i]<<"\t"
                   <<std::setw(8)<<std::fixed<<std::setprecision(2)
-                  <<100*vnorm[i]/norm0[i]" %\n";
+                  <<100*vnorm[i]/norm0[i] << " %\n";
       }
    }
    mfem::out<<std::flush;
