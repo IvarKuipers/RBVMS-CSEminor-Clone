@@ -24,7 +24,7 @@ void JacobianPreconditioner::SetOperator(const Operator &op)
       HypreParMatrix* Jpp = dynamic_cast<HypreParMatrix*>(&jacobian->GetBlock(1,1));
       HypreParMatrix *Jpp2 = const_cast<HypreParMatrix*>(Jpp);
     //  prec[1] = new HypreSmoother();//*Jpp);
-      HypreBoomerAMG *ParaSails = new HypreParaSails(*Jpp);
+      HypreParaSails *ParaSails = new HypreParaSails(*Jpp);
       
       ParaSails->SetPrintLevel(1);
       //8 i1-Jacobi smoother. Try 6 (symmetric gauss-seidel) next, afterwards 16 (ILU)
