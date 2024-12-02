@@ -51,6 +51,7 @@ void GeneralResidualMonitor::MonitorResidual(int it,
                <<", ||r||/||r_0|| = "
                <<std::setw(6)<<std::fixed<<std::setprecision(2)
                <<100*norm/norm0<< ", Time spent: " << Krylov_duration/1000 << " seconds"<< " %\n";
+      Krylov_start = Krylov_end;
    }
 }
 
@@ -103,6 +104,8 @@ void SystemResidualMonitor::MonitorResidual(int it,
                   <<std::setw(8)<<std::fixed<<std::setprecision(2)
                   <<100*vnorm[i]/norm0[i] << " %\n";
       }
+
+      Newt_start = Newt_end;
    }
    mfem::out<<std::flush;
 }
