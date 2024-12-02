@@ -6,6 +6,7 @@
 //------------------------------------------------------------------------------
 
 #include "monitor.hpp"
+#include <chrono>
 
 using namespace mfem;
 using namespace RBVMS;
@@ -32,20 +33,24 @@ void GeneralResidualMonitor::MonitorResidual(int it,
                                              const Vector &r,
                                              bool final)
 {
+   static auto Krylov_start = std::chrono::high_resolution_clock::now();
    if (it == 0)
    {
       norm0 = norm;
+      Krylov_start = std::chrono::high_resolution_clock::now();
    }
 
    if ((print_level > 0) && (( it%print_level == 0) || final))
    {
+      auto Krylov_end = std::chrono::high_resolution_clock::now();
+      auto Krylov_duration = std::chrono::duration_cast<std::chrono::seconds>(Krylov_start - Krylov_end).count();
       mfem::out<<prefix<<" iteration "<<std::setw(3)<<it
                <<": ||r|| = "
                <<std::setw(8)<<std::defaultfloat<<std::setprecision(3)
                <<norm
                <<", ||r||/||r_0|| = "
                <<std::setw(6)<<std::fixed<<std::setprecision(2)
-               <<100*norm/norm0<<" %\n";
+               <<100*norm/norm0<< "Time spent: " << Krylov_duration << " seconds"<< " %\n";
    }
 }
 
@@ -74,18 +79,21 @@ void SystemResidualMonitor::MonitorResidual(int it,
                                             const Vector &r,
                                             bool final)
 {
+   static auto Newt_start = std::chrono::high_resolution_clock::now();
    Vector vnorm(nvar);
 
    for (int i = 0; i < nvar; ++i)
    {
       Vector r_i(r.GetData() + bOffsets[i], bOffsets[i+1] - bOffsets[i]);
       vnorm[i] = sqrt(InnerProduct(MPI_COMM_WORLD, r_i, r_i));
-      if (it == 0) { norm0[i] = vnorm[i]; }
+      if (it == 0) { norm0[i] = vnorm[i];  Newt_start = std::chrono::high_resolution_clock::now();}
    }
 
    bool print = (print_level > 0) &&  ((it%print_level == 0) || final);
    if (print)
    {
+      auto Newt_end = std::chrono::high_resolution_clock::now();
+      auto Newt_duration = std::chrono::duration_cast<std::chrono::seconds>(Newt_start - Newt_end).count();
       mfem::out << prefix << " iteration " << std::setw(3) << it <<"\n"
                 << " ||r||  \t"<< "||r||/||r_0||\n";
       for (int i = 0; i < nvar; ++i)
@@ -93,7 +101,7 @@ void SystemResidualMonitor::MonitorResidual(int it,
          mfem::out<<std::setw(8)<<std::defaultfloat<<std::setprecision(4)
                   <<vnorm[i]<<"\t"
                   <<std::setw(8)<<std::fixed<<std::setprecision(2)
-                  <<100*vnorm[i]/norm0[i]<<" %\n";
+                  <<100*vnorm[i]/norm0[i]<< "Time spent: " << Newt_duration << " seconds"<<" %\n";
       }
    }
    mfem::out<<std::flush;
