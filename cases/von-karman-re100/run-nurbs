@@ -7,7 +7,7 @@ mesh=von-karman-nurbs.mesh
 
 rm output* log*
 
-mpirun -n 16 $exe -m $mesh -o 2  -r 4 \
+mpirun -n 16 $exe -m $mesh -o 3 -r 4 \
 --outflow-bdr 4  --weak-bdr 3 -l libvkvs.so \
 -s 45 -dt 0.1 --dt_vis 0.5 -tf 1000 \
 -lt 1e-3 -ni 20  -ri 10  | tee log0
