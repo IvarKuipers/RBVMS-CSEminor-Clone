@@ -28,9 +28,9 @@ void JacobianPreconditioner::SetOperator(const Operator &op)
     //  prec[1] = new HypreSmoother();//*Jpp);
       HypreParaSails *Parasails = new HypreParaSails(*Jpp);
       //Parasails->SetParams(0.05, 1);
-      Parasails->SetFilter(0.1); 
+      //Parasails->SetFilter(0.1); 
       //Parasails->SetReuse(1);        
-      Parasails->SetLogging(1); 
+      //Parasails->SetLogging(1); 
       prec[1] = Parasails;//*Jpp);
    }
    //std::cout << "Setting Operator for block 1,1" << std::endl;
