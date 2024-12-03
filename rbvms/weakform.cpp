@@ -336,7 +336,7 @@ void IncNavStoIntegrator::AssembleElementGrad(
 
    // For-loop dimensions:
    // ir.GetNPoints(), dim, dof_u, dof_p
-   std::cout << "ir.GetNPoints() = " << ir.GetNPoints() << ", dim = " << dim << ", dof_u = " << dof_u << ", dof_p = " << dof_p << std:endl;
+   std::cout << "ir.GetNPoints() = " << ir.GetNPoints() << ", dim = " << dim << ", dof_u = " << dof_u << ", dof_p = " << dof_p << std::endl;
 
    for (int i = 0; i < ir.GetNPoints(); ++i)
    {
