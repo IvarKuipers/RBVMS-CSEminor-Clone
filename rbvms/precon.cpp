@@ -28,11 +28,11 @@ void JacobianPreconditioner::SetOperator(const Operator &op)
       HypreDiagScale *DiagScaling = new HypreDiagScale(*Jpp);        
       prec[1] = DiagScaling;//*Jpp);
    }
-   std::cout << "Setting Operator for block 1,1" << std::endl;
+  // std::cout << "Setting Operator for block 1,1" << std::endl;
    
    for (int i = 0; i < prec.Size(); ++i)
    {
-      std::cout << "\nSetting preconditioner as operator\n" << std::endl;
+      std::cout << "\nSetting preconditioner as operator" << std::endl;
       prec[i]->SetOperator(jacobian->GetBlock(i,i));
       SetDiagonalBlock(i, prec[i]);
 
