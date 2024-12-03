@@ -27,10 +27,13 @@ void JacobianPreconditioner::SetOperator(const Operator &op)
       HypreParMatrix *Jpp2 = const_cast<HypreParMatrix*>(Jpp);
     //  prec[1] = new HypreSmoother();//*Jpp);
       HypreParaSails *Parasails = new HypreParaSails(*Jpp);
+      Parasails->SetParams(0.05, 1);
+      //Parasails->SetReuse(1);        
+      Parasails->SetLogging(1); 
       prec[1] = Parasails;//*Jpp);
    }
-   std::cout << "Setting Operator for block 1,1" << std::endl;
-   prec[1]->SetOperator(jacobian->GetBlock(1,1));
+   //std::cout << "Setting Operator for block 1,1" << std::endl;
+   
    for (int i = 0; i < prec.Size(); ++i)
    {
       //prec[i]->SetOperator(jacobian->GetBlock(i,i));
