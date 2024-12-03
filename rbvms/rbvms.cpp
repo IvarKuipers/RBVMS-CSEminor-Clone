@@ -222,8 +222,11 @@ int main(int argc, char *argv[])
    RBVMS::GeneralResidualMonitor j_monitor(MPI_COMM_WORLD,"\t\tFGMRES", 25);
    FGMRESSolver j_gmres(MPI_COMM_WORLD);
    j_gmres.iterative_mode = false;
-   j_gmres.SetRelTol(GMRES_RelTol);
-   j_gmres.SetAbsTol(1e-12);
+   //j_gmres.SetRelTol(GMRES_RelTol);
+   //Always 500 iterations
+   j_gmres.SetRelTol(0);
+   //j_gmres.SetAbsTol(1e-12);
+   j_gmres.SetAbsTol(0);
    j_gmres.SetMaxIter(GMRES_MaxIter);
    j_gmres.SetPrintLevel(-1);
    j_gmres.SetMonitor(j_monitor);
@@ -237,8 +240,11 @@ int main(int argc, char *argv[])
    newton_solver.iterative_mode = true;
    newton_solver.SetPrintLevel(-1);
    newton_solver.SetMonitor(newton_monitor);
-   newton_solver.SetRelTol(Newton_RelTol);
-   newton_solver.SetAbsTol(1e-12);
+   //newton_solver.SetRelTol(Newton_RelTol);
+   //Always 10 iterations
+   newton_solver.SetRelTol(0);
+   //newton_solver.SetAbsTol(1e-12);
+   newton_solver.SetAbsTol(0);
    newton_solver.SetMaxIter(Newton_MaxIter );
    newton_solver.SetSolver(j_gmres);
 
