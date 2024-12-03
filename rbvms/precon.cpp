@@ -27,7 +27,7 @@ void JacobianPreconditioner::SetOperator(const Operator &op)
       HypreParMatrix *Jpp2 = const_cast<HypreParMatrix*>(Jpp);
     //  prec[1] = new HypreSmoother();//*Jpp);
       HypreParaSails *Parasails = new HypreParaSails(*Jpp);
-      Parasails->SetParams(0.05, 1);
+      //Parasails->SetParams(0.05, 1);
       //Parasails->SetReuse(1);        
       Parasails->SetLogging(1); 
       prec[1] = Parasails;//*Jpp);
