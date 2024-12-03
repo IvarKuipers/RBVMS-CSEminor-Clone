@@ -298,10 +298,10 @@ void IncNavStoIntegrator::AssembleElementGrad(
    *elmats(1,0) = 0.0;
    *elmats(1,1) = 0.0;
 
-   elmats00 = *elmats(0,0);
-   elmats01 = *elmats(0,1);
-   elmats10 = *elmats(1,0);
-   elmats11 = *elmats(1,1);
+   auto elmats00 = *elmats(0,0);
+   auto elmats01 = *elmats(0,1);
+   auto elmats10 = *elmats(1,0);
+   auto elmats11 = *elmats(1,1);
 
    sh_u.SetSize(dof_u);
    shg_u.SetSize(dof_u, dim);
