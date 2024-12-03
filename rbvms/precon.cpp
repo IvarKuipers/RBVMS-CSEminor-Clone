@@ -20,20 +20,25 @@ void JacobianPreconditioner::SetOperator(const Operator &op)
       prec[0] = new HypreSmoother();//*Jpp);new HypreSmoother();//HypreILU()
    }
    
-   //prec[0]->SetOperator(jacobian->GetBlock(0,0));
+   prec[0]->SetOperator(jacobian->GetBlock(0,0));
    if (prec[1] == nullptr)
    {
       HypreParMatrix* Jpp = dynamic_cast<HypreParMatrix*>(&jacobian->GetBlock(1,1));
       HypreParMatrix *Jpp2 = const_cast<HypreParMatrix*>(Jpp);
-      HypreDiagScale *DiagScaling = new HypreDiagScale(*Jpp);        
-      prec[1] = DiagScaling;//*Jpp);
+    //  prec[1] = new HypreSmoother();//*Jpp);
+      HypreParaSails *Parasails = new HypreParaSails(*Jpp);
+      //Parasails->SetParams(0.05, 1);
+      Parasails->SetFilter(0.01); 
+      //Parasails->SetReuse(1);        
+      //Parasails->SetLogging(1); 
+      prec[1] = Parasails;//*Jpp);
    }
   // std::cout << "Setting Operator for block 1,1" << std::endl;
    
    for (int i = 0; i < prec.Size(); ++i)
    {
-      std::cout << "\nSetting preconditioner as operator" << std::endl;
-      prec[i]->SetOperator(jacobian->GetBlock(i,i));
+      //std::cout << "\nSetting preconditioner as operator" << std::endl;
+     // prec[i]->SetOperator(jacobian->GetBlock(i,i));
       SetDiagonalBlock(i, prec[i]);
 
       for (int j = i+1; j < prec.Size(); ++j)
