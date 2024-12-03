@@ -518,11 +518,11 @@ void IncNavStoIntegrator::AssembleElementGrad(
 
    std::cout << "---------------------- AEG  Profile -------------------" << std::endl;
    std::cout << "Introduction Elapsed time: " << IntroductionTime << " microseconds (1 call)" << std::endl;
-   std::cout << "For-loop Introduction Elapsed time: " << ForloopIntroductionTimeSum << " microseconds (" << ForloopIntroductionCounter << "calls)" << std::endl;
-   std::cout << "Momentum Velocity Block Elapsed time: " << MomentumVelocityBlockTimeSum << " microseconds (" << MomentumVelocityBlockCounter1 << " & " << MomentumVelocityBlockCounter2 << "calls)" << std::endl;   
-   std::cout << "Momentum Pressure Block Elapsed time: " << MomentumPressureBlockTimeSum << " microseconds (" << MomentumPressureBlockCounter << "calls)" << std::endl;
-   std::cout << "Continuity Velocity Elapsed time: " << ContinuityVelocityBlockTimeSum << " microseconds (" << ContinuityVelocityBlockCounter << "calls)" << std::endl;
-   std::cout << "Continuity Pressure Elapsed time: " << ContinuityPressureBlockTimeSum << " microseconds (" << ContinuityPressureBlockCounter << "calls)" << std::endl;
+   std::cout << "For-loop Introduction Elapsed time: " << ForloopIntroductionTimeSum << " microseconds (" << ForloopIntroductionCounter << "calls) (Mean time per call: " << ForloopIntroductionTimeSum / ForloopIntroductionCounter << std::endl;
+   std::cout << "Momentum Velocity Block Elapsed time: " << MomentumVelocityBlockTimeSum << " microseconds (" << MomentumVelocityBlockCounter1 << " & " << MomentumVelocityBlockCounter2 << "calls) (Mean time per call: " << MomentumVelocityBlockTimeSum / MomentumVelocityBlockCounter1 << std::endl;   
+   std::cout << "Momentum Pressure Block Elapsed time: " << MomentumPressureBlockTimeSum << " microseconds (" << MomentumPressureBlockCounter << "calls) (Mean time per call: " << MomentumPressureBlockTimeSum / MomentumPressureBlockCounter << std::endl;
+   std::cout << "Continuity Velocity Elapsed time: " << ContinuityVelocityBlockTimeSum << " microseconds (" << ContinuityVelocityBlockCounter << "calls) (Mean time per call: " << ContinuityVelocityBlockTimeSum / ContinuityVelocityBlockCounter << std::endl;
+   std::cout << "Continuity Pressure Elapsed time: " << ContinuityPressureBlockTimeSum << " microseconds (" << ContinuityPressureBlockCounter << "calls) (Mean time per call: " << ContinuityPressureBlockTimeSum / ContinuityPressureBlockCounter << std::endl;
    std::cout << "--------------------- Next AEG call ---------------------\n" << std::endl;
 }
 
