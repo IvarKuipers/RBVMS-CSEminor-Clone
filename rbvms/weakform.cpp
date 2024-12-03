@@ -334,6 +334,10 @@ void IncNavStoIntegrator::AssembleElementGrad(
    int ContinuityVelocityBlockCounter = 0;
    int ContinuityPressureBlockCounter = 0;
 
+   // For-loop dimensions:
+   // ir.GetNPoints(), dim, dof_u, dof_p
+   std::cout << "ir.GetNPoints() = " << ir.GetNPoints() << ", dim = " << dim << ", dof_u = " << dof_u << ", dof_p = " << dof_p << std:endl;
+
    for (int i = 0; i < ir.GetNPoints(); ++i)
    {
       // Start Measuring Time
@@ -402,6 +406,8 @@ void IncNavStoIntegrator::AssembleElementGrad(
       // Recompute convective gradient
       MultAtB(elf_u, shg_u, grad_u);
 
+      ForloopIntroductionCounter++;
+
       auto TimeEnd2 = std::chrono::high_resolution_clock::now();
       ForloopIntroductionTime = std::chrono::duration_cast<std::chrono::microseconds>(TimeEnd2 - TimeStart2).count();
       ForloopIntroductionTimeSum += ForloopIntroductionTime;
@@ -449,6 +455,7 @@ void IncNavStoIntegrator::AssembleElementGrad(
                {
                   (*elmats(0,0))(i_u + i_dim*dof_u, j_u + j_dim*dof_u)
                   += tau_c*shg_u(i_u,i_dim)*shg_u(j_u,j_dim)*w*dt;
+                  MomentumVelocityBlockCounter3++;
                }
             }
 
