@@ -241,11 +241,11 @@ int main(int argc, char *argv[])
    newton_solver.SetPrintLevel(-1);
    newton_solver.SetMonitor(newton_monitor);
    //newton_solver.SetRelTol(Newton_RelTol);
-   //Always 10 iterations
+   //Always 10 iterations or 20 somehow
    newton_solver.SetRelTol(0);
    //newton_solver.SetAbsTol(1e-12);
    newton_solver.SetAbsTol(0);
-   newton_solver.SetMaxIter(Newton_MaxIter );
+   newton_solver.SetMaxIter(Newton_MaxIter);
    newton_solver.SetSolver(j_gmres);
 
    // Define the physical parameters
