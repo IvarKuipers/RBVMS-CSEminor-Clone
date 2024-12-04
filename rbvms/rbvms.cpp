@@ -228,7 +228,7 @@ int main(int argc, char *argv[])
    // j_gmres.SetMonitor(j_monitor);
    // j_gmres.SetPreconditioner(jac_prec);
 
-   RBVMS::GeneralResidualMonitor j_monitor(MPI_COMM_WORLD, "\t\tBiCGSTAB", 25); //Maybe set printlvl to something lower to more accurately see whats going on
+   RBVMS::GeneralResidualMonitor j_monitor(MPI_COMM_WORLD, "\t\tBiCGSTAB", 2); //Maybe set printlvl to something lower to more accurately see whats going on
    BiCGSTABSolver j_bicgstab(MPI_COMM_WORLD);
 
    // Set options for BiCGSTAB solver
