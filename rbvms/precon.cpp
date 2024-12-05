@@ -14,7 +14,7 @@ using namespace RBVMS;
 void JacobianPreconditioner::SetOperator(const Operator &op)
 {
    BlockOperator *jacobian = (BlockOperator *) &op;
-   bool Resetter(true);
+
    if (prec[0] == nullptr)
    {
       prec[0] = new HypreILU();//*Jpp);new HypreSmoother();//HypreILU()
@@ -38,9 +38,7 @@ void JacobianPreconditioner::SetOperator(const Operator &op)
    for (int i = 0; i < prec.Size(); ++i)
    {
       //std::cout << "\nSetting preconditioner as operator" << std::endl;
-      
-      if (Resetter)
-         prec[i]->SetOperator(jacobian->GetBlock(i,i));
+      prec[i]->SetOperator(jacobian->GetBlock(i,i));
       SetDiagonalBlock(i, prec[i]);
 
       for (int j = i+1; j < prec.Size(); ++j)
@@ -48,7 +46,6 @@ void JacobianPreconditioner::SetOperator(const Operator &op)
          SetBlock(j,i, const_cast<Operator*>(&jacobian->GetBlock(j,i)));
       }
    }
-   Resetter(false);
 }
 
 // Destructor
