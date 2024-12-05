@@ -48,7 +48,7 @@ void JacobianPreconditioner::SetOperator(const Operator &op)
          SetBlock(j,i, const_cast<Operator*>(&jacobian->GetBlock(j,i)));
       }
    }
-   Resetter(false);
+   Resetter= false;
 }
 
 // Destructor
