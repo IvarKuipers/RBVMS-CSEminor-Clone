@@ -477,11 +477,13 @@ void IncNavStoIntegrator::AssembleElementGrad(
                += (shg_p(i_p,dim_u)*tau_m*ushg_u(j_u)
                    - shg_u(j_u,dim_u)*sh_p(i_p))*w*dt;
                
-               // // Continuity - Velocity block (q,u)
-               // (*elmats(1,0))(i_p, j_u + dof_u * dim_u)
-               // -= sh_p(i_p)*shg_u(j_u,dim_u)*w*dt;
-               // (*elmats(1,0))(i_p, j_u + dof_u * dim_u)
-               // += shg_p(i_p, dim_u)*dupdu(j_u)*w;
+               // MomentumPressureBlockCounter++;
+
+               // Continuity - Velocity block (q,u)
+               (*elmats(1,0))(i_p, j_u + dof_u * dim_u)
+               -= sh_p(i_p)*shg_u(j_u,dim_u)*w*dt;
+               (*elmats(1,0))(i_p, j_u + dof_u * dim_u)
+               += shg_p(i_p, dim_u)*dupdu(j_u)*w;
             }
          }
       }
@@ -492,19 +494,20 @@ void IncNavStoIntegrator::AssembleElementGrad(
 
       auto TimeStart5 = std::chrono::high_resolution_clock::now();
       // Continuity - Velocity block (q,u)
-      for (int i_p = 0; i_p < dof_p; ++i_p)
-      {
-         for (int j_u = 0; j_u < dof_u; ++j_u)
-         {
-            for (int dim_u = 0; dim_u < dim; ++dim_u)
-            {
-               (*elmats(1,0))(i_p, j_u + dof_u * dim_u)
-               -= sh_p(i_p)*shg_u(j_u,dim_u)*w*dt;
-               (*elmats(1,0))(i_p, j_u + dof_u * dim_u)
-               += shg_p(i_p, dim_u)*dupdu(j_u)*w;
-            }
-         }
-      }
+      // for (int i_p = 0; i_p < dof_p; ++i_p)
+      // {
+      //    for (int j_u = 0; j_u < dof_u; ++j_u)
+      //    {
+      //       for (int dim_u = 0; dim_u < dim; ++dim_u)
+      //       {
+      //          // (*elmats(1,0))(i_p, j_u + dof_u * dim_u)
+      //          // -= sh_p(i_p)*shg_u(j_u,dim_u)*w*dt;
+      //          // (*elmats(1,0))(i_p, j_u + dof_u * dim_u)
+      //          // += shg_p(i_p, dim_u)*dupdu(j_u)*w;
+      //          // ContinuityVelocityBlockCounter++;
+      //       }
+      //    }
+      // }
       auto TimeEnd5 = std::chrono::high_resolution_clock::now();
       ContinuityVelocityBlockTime = std::chrono::duration_cast<std::chrono::microseconds>(TimeEnd5 - TimeStart5).count();
       ContinuityVelocityBlockTimeSum += ContinuityVelocityBlockTime;
