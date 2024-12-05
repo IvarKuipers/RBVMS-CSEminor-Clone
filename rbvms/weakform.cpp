@@ -462,9 +462,9 @@ void IncNavStoIntegrator::AssembleElementGrad(
       // Momentum - Pressure block (w,p) & // Continuity - Velocity block (q,u)
       for (int i_p = 0; i_p < dof_p; ++i_p)
       {
-         for (int j_u = 0; j_u < dof_u; ++j_u)
+         for (int dim_u = 0; dim_u < dim; ++dim_u)
          {
-            for (int dim_u = 0; dim_u < dim; ++dim_u)
+            for (int j_u = 0; j_u < dof_u; ++j_u)
             {
                // Momentum - Pressure block (w,p)
                (*elmats(0,1))(j_u + dof_u * dim_u, i_p)
@@ -487,9 +487,9 @@ void IncNavStoIntegrator::AssembleElementGrad(
       // Continuity - Velocity block (q,u)
       for (int i_p = 0; i_p < dof_p; ++i_p)
       {
-         for (int j_u = 0; j_u < dof_u; ++j_u)
+         for (int dim_u = 0; dim_u < dim; ++dim_u)
          {
-            for (int dim_u = 0; dim_u < dim; ++dim_u)
+            for (int j_u = 0; j_u < dof_u; ++j_u)
             {
                (*elmats(1,0))(i_p, j_u + dof_u * dim_u)
                -= sh_p(i_p)*shg_u(j_u,dim_u)*w*dt;
