@@ -14,11 +14,10 @@ using namespace RBVMS;
 void JacobianPreconditioner::SetOperator(const Operator &op)
 {
    BlockOperator *jacobian = (BlockOperator *) &op;
-
+   int counter(1);
    if (prec[0] == nullptr)
    {
       prec[0] = new HypreILU();//*Jpp);new HypreSmoother();//HypreILU()
-      std::cout << "Making a new precondtioner\n";
    }
    
    //prec[0]->SetOperator(jacobian->GetBlock(0,0));
@@ -33,14 +32,19 @@ void JacobianPreconditioner::SetOperator(const Operator &op)
       //Parasails->SetReuse(1);        
       //Parasails->SetLogging(1); 
       prec[1] = Parasails;//*Jpp);
-      std::cout << "Making a new precondtioner\n";
    }
   // std::cout << "Setting Operator for block 1,1" << std::endl;
    
    for (int i = 0; i < prec.Size(); ++i)
    {
       //std::cout << "\nSetting preconditioner as operator" << std::endl;
-      prec[i]->SetOperator(jacobian->GetBlock(i,i));
+      if (counter % 4 == 0)
+         {std::cout << "Setting the operator\n";    
+         prec[i]->SetOperator(jacobian->GetBlock(i,i));}
+      else if (counter == 1)
+         {std::cout << "Setting the operator\n"; 
+         prec[i]->SetOperator(jacobian->GetBlock(i,i));}
+
       SetDiagonalBlock(i, prec[i]);
 
       for (int j = i+1; j < prec.Size(); ++j)
@@ -48,6 +52,7 @@ void JacobianPreconditioner::SetOperator(const Operator &op)
          SetBlock(j,i, const_cast<Operator*>(&jacobian->GetBlock(j,i)));
       }
    }
+   counter++;
 }
 
 // Destructor
