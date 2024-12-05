@@ -39,15 +39,11 @@ void JacobianPreconditioner::SetOperator(const Operator &op)
    {
       //std::cout << "\nSetting preconditioner as operator" << std::endl;
       if (counter % 4 == 0)
-      {
-         std::cout << "Setting the operator\n";    
-         prec[i]->SetOperator(jacobian->GetBlock(i,i));
-      }
+         {std::cout << "Setting the operator\n";    
+         prec[i]->SetOperator(jacobian->GetBlock(i,i));}
       else if (counter == 1)
-      {
-         std::cout << "Setting the operator\n"; 
-         prec[i]->SetOperator(jacobian->GetBlock(i,i));
-      }
+         {std::cout << "Setting the operator\n"; 
+         prec[i]->SetOperator(jacobian->GetBlock(i,i));}
 
       SetDiagonalBlock(i, prec[i]);
 
@@ -56,7 +52,7 @@ void JacobianPreconditioner::SetOperator(const Operator &op)
          SetBlock(j,i, const_cast<Operator*>(&jacobian->GetBlock(j,i)));
       }
    }
-   ++counter;
+   counter++;
 }
 
 // Destructor
