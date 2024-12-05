@@ -18,6 +18,7 @@ void JacobianPreconditioner::SetOperator(const Operator &op)
    if (prec[0] == nullptr)
    {
       prec[0] = new HypreILU();//*Jpp);new HypreSmoother();//HypreILU()
+      std::cout << "Making a new precondtioner\n";
    }
    
    //prec[0]->SetOperator(jacobian->GetBlock(0,0));
@@ -32,6 +33,7 @@ void JacobianPreconditioner::SetOperator(const Operator &op)
       //Parasails->SetReuse(1);        
       //Parasails->SetLogging(1); 
       prec[1] = Parasails;//*Jpp);
+      std::cout << "Making a new precondtioner\n";
    }
   // std::cout << "Setting Operator for block 1,1" << std::endl;
    
