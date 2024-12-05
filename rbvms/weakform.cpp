@@ -465,17 +465,23 @@ void IncNavStoIntegrator::AssembleElementGrad(
       MomentumVelocityBlockTimeSum += MomentumVelocityBlockTime;
 
       auto TimeStart4 = std::chrono::high_resolution_clock::now();
-      // Momentum - Pressure block (w,p)
-      for (int j_u = 0; j_u < dof_u; ++j_u)
+      // Momentum - Pressure block (w,p) & // Continuity - Velocity block (q,u)
+      for (int i_p = 0; i_p < dof_p; ++i_p)
       {
-         for (int dim_u = 0; dim_u < dim; ++dim_u)
+         for (int j_u = 0; j_u < dof_u; ++j_u)
          {
-            for (int i_p = 0; i_p < dof_p; ++i_p)
+            for (int dim_u = 0; dim_u < dim; ++dim_u)
             {
+               // Momentum - Pressure block (w,p)
                (*elmats(0,1))(j_u + dof_u * dim_u, i_p)
                += (shg_p(i_p,dim_u)*tau_m*ushg_u(j_u)
                    - shg_u(j_u,dim_u)*sh_p(i_p))*w*dt;
-               MomentumPressureBlockCounter++;
+               
+               // // Continuity - Velocity block (q,u)
+               // (*elmats(1,0))(i_p, j_u + dof_u * dim_u)
+               // -= sh_p(i_p)*shg_u(j_u,dim_u)*w*dt;
+               // (*elmats(1,0))(i_p, j_u + dof_u * dim_u)
+               // += shg_p(i_p, dim_u)*dupdu(j_u)*w;
             }
          }
       }
@@ -486,18 +492,16 @@ void IncNavStoIntegrator::AssembleElementGrad(
 
       auto TimeStart5 = std::chrono::high_resolution_clock::now();
       // Continuity - Velocity block (q,u)
-      for (int j_u = 0; j_u < dof_u; ++j_u)
+      for (int i_p = 0; i_p < dof_p; ++i_p)
       {
-         for (int dim_u = 0; dim_u < dim; ++dim_u)
+         for (int j_u = 0; j_u < dof_u; ++j_u)
          {
-            for (int i_p = 0; i_p < dof_p; ++i_p)
+            for (int dim_u = 0; dim_u < dim; ++dim_u)
             {
                (*elmats(1,0))(i_p, j_u + dof_u * dim_u)
                -= sh_p(i_p)*shg_u(j_u,dim_u)*w*dt;
                (*elmats(1,0))(i_p, j_u + dof_u * dim_u)
                += shg_p(i_p, dim_u)*dupdu(j_u)*w;
-               ContinuityVelocityBlockCounter++;
-               
             }
          }
       }
@@ -520,7 +524,7 @@ void IncNavStoIntegrator::AssembleElementGrad(
    auto TotalTimeEnd = std::chrono::high_resolution_clock::now();
    auto TotalTime = std::chrono::duration_cast<std::chrono::microseconds>(TotalTimeEnd - TimeStart1).count();
 
-   bool printMeasurements = false;
+   bool printMeasurements = true;
    if (printMeasurements){
       std::cout << "ir.GetNPoints() = " << ir.GetNPoints() << ", dim = " << dim << ", dof_u = " << dof_u << ", dof_p = " << dof_p << std::endl;
       std::cout << "---------------------- AEG  Profile -------------------" << std::endl;
