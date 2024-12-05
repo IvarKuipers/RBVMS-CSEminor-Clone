@@ -503,7 +503,7 @@ void IncNavStoIntegrator::AssembleElementGrad(
                (elmats10)(i_p, j_u + dof_u * dim_u)
                += shg_p(i_p, dim_u)*dupdu(j_u)*w;
                ContinuityVelocityBlockCounter++;
-               TimeCounter++;
+               
             }
          }
       }
@@ -525,8 +525,6 @@ void IncNavStoIntegrator::AssembleElementGrad(
 
    auto TotalTimeEnd = std::chrono::high_resolution_clock::now();
    auto TotalTime = std::chrono::duration_cast<std::chrono::microseconds>(TotalTimeEnd - TimeStart1).count();
-   SumTime += TotalTime;
-   TimeCounter++;
 
    std::cout << "---------------------- AEG  Profile -------------------" << std::endl;
    std::cout << "Introduction Elapsed time: " << IntroductionTime << " microseconds (1 call)" << std::endl;
@@ -538,10 +536,6 @@ void IncNavStoIntegrator::AssembleElementGrad(
    std::cout << "Total AEG Elapsed time: " << TotalTime << " microseconds" << std::endl;
    std::cout << "--------------------- Next AEG call ---------------------\n" << std::endl;
 
-   if (TimeCounter == 100){
-      std::cout << "100 Average Elapsed  Time:" << SumTime/TimeCounter << std::endl;
-      TimeCounter = 0;
-   }
 }
 
 // Assemble the outflow boundary residual vectors
