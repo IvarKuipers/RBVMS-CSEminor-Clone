@@ -548,7 +548,7 @@ void IncNavStoIntegrator::AssembleElementGrad(
       // std::cout << "Sum of Elapsed time: " << IntroductionTime + ForloopIntroductionTimeSum + MomentumVelocityBlockTimeSum + MomentumPressureBlockTimeSum + ContinuityVelocityBlockTimeSum + ContinuityPressureBlockTimeSum<< " microseconds" << std::endl;
       // std::cout << "--------------------- Next AEG call ---------------------\n" << std::endl;
 
-      std::cout << IntroductionTime << " " << ForloopIntroductionTimeSum << " " << MomentumVelocityBlockTimeSum << " " << MomentumPressureBlockTimeSum << " " << ContinuityVelocityBlockTimeSum << " " << ContinuityPressureBlockTimeSum << " " << TotalTime << std::endl;
+      std::cout << IntroductionTime << "\t" << ForloopIntroductionTimeSum << "\t" << MomentumVelocityBlockTimeSum << "\t" << MomentumPressureBlockTimeSum << "\t" << ContinuityVelocityBlockTimeSum << "\t" << ContinuityPressureBlockTimeSum << "\t" << TotalTime << std::endl;
    }
 
 }
