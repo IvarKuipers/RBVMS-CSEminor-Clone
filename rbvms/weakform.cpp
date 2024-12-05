@@ -298,11 +298,6 @@ void IncNavStoIntegrator::AssembleElementGrad(
    *elmats(1,0) = 0.0;
    *elmats(1,1) = 0.0;
 
-   auto elmats00 = *elmats(0,0);
-   auto elmats01 = *elmats(0,1);
-   auto elmats10 = *elmats(1,0);
-   auto elmats11 = *elmats(1,1);
-
    sh_u.SetSize(dof_u);
    shg_u.SetSize(dof_u, dim);
    ushg_u.SetSize(dof_u);
@@ -442,14 +437,14 @@ void IncNavStoIntegrator::AssembleElementGrad(
             mat *= w;
             for (int dim_u = 0; dim_u < dim; ++dim_u)
             {
-               (elmats00)(i_u + dim_u*dof_u, j_u + dim_u*dof_u) += mat;
+               (*elmats(0,0))(i_u + dim_u*dof_u, j_u + dim_u*dof_u) += mat;
             }
 
             for (int i_dim = 0; i_dim < dim; ++i_dim)
             {
                for (int j_dim = 0; j_dim < dim; ++j_dim)
                {
-                  (elmats00)(i_u + i_dim*dof_u, j_u + j_dim*dof_u)
+                  (*elmats(0,0))(i_u + i_dim*dof_u, j_u + j_dim*dof_u)
                   += mu*shg_u(i_u,j_dim)*shg_u(j_u,i_dim)*w*dt;
                   MomentumVelocityBlockCounter2++;
                }
@@ -458,7 +453,7 @@ void IncNavStoIntegrator::AssembleElementGrad(
             {
                for (int j_dim = 0; j_dim < dim; ++j_dim)
                {
-                  (elmats00)(i_u + i_dim*dof_u, j_u + j_dim*dof_u)
+                  (*elmats(0,0))(i_u + i_dim*dof_u, j_u + j_dim*dof_u)
                   += tau_c*shg_u(i_u,i_dim)*shg_u(j_u,j_dim)*w*dt;
                   MomentumVelocityBlockCounter3++;
                }
@@ -478,7 +473,7 @@ void IncNavStoIntegrator::AssembleElementGrad(
          {
             for (int i_p = 0; i_p < dof_p; ++i_p)
             {
-               (elmats01)(j_u + dof_u * dim_u, i_p)
+               (*elmats(0,1))(j_u + dof_u * dim_u, i_p)
                += (shg_p(i_p,dim_u)*tau_m*ushg_u(j_u)
                    - shg_u(j_u,dim_u)*sh_p(i_p))*w*dt;
                MomentumPressureBlockCounter++;
@@ -498,9 +493,9 @@ void IncNavStoIntegrator::AssembleElementGrad(
          {
             for (int i_p = 0; i_p < dof_p; ++i_p)
             {
-               (elmats10)(i_p, j_u + dof_u * dim_u)
+               (*elmats(1,0))(i_p, j_u + dof_u * dim_u)
                -= sh_p(i_p)*shg_u(j_u,dim_u)*w*dt;
-               (elmats10)(i_p, j_u + dof_u * dim_u)
+               (*elmats(1,0))(i_p, j_u + dof_u * dim_u)
                += shg_p(i_p, dim_u)*dupdu(j_u)*w;
                ContinuityVelocityBlockCounter++;
                
@@ -514,7 +509,7 @@ void IncNavStoIntegrator::AssembleElementGrad(
       auto TimeStart6 = std::chrono::high_resolution_clock::now();
       
       // Continuity - Pressure block (w,p)
-      AddMult_a_AAt(-w*tau_m*dt, shg_p, elmats11);
+      AddMult_a_AAt(-w*tau_m*dt, shg_p, *elmats(1,1));
 
       auto TimeEnd6 = std::chrono::high_resolution_clock::now();
       ContinuityPressureBlockTime = std::chrono::duration_cast<std::chrono::microseconds>(TimeEnd4 - TimeStart4).count();
