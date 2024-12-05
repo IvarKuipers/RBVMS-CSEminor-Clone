@@ -536,17 +536,19 @@ void IncNavStoIntegrator::AssembleElementGrad(
       auto TotalTimeEnd = std::chrono::high_resolution_clock::now();
       auto TotalTime = std::chrono::duration_cast<std::chrono::microseconds>(TotalTimeEnd - TimeStart1).count();
 
-      std::cout << "ir.GetNPoints() = " << ir.GetNPoints() << ", dim = " << dim << ", dof_u = " << dof_u << ", dof_p = " << dof_p << std::endl;
-      std::cout << "---------------------- AEG  Profile -------------------" << std::endl;
-      std::cout << "Introduction Elapsed time: " << IntroductionTime << " microseconds (1 call)" << std::endl;
-      std::cout << "For-loop Introduction Elapsed time: " << ForloopIntroductionTimeSum << " microseconds (" << ForloopIntroductionCounter << "calls) (Mean time per call: " << ForloopIntroductionTimeSum / ForloopIntroductionCounter << std::endl;
-      std::cout << "Momentum Velocity Block Elapsed time: " << MomentumVelocityBlockTimeSum << " microseconds (" << MomentumVelocityBlockCounter1 << " & " << MomentumVelocityBlockCounter2 << "calls) (Mean time per call: " << MomentumVelocityBlockTimeSum / MomentumVelocityBlockCounter1 << std::endl;   
-      std::cout << "Momentum Pressure Block Elapsed time: " << MomentumPressureBlockTimeSum << " microseconds (" << MomentumPressureBlockCounter << "calls) (Mean time per call: " << MomentumPressureBlockTimeSum / MomentumPressureBlockCounter << std::endl;
-      std::cout << "Continuity Velocity Elapsed time: " << ContinuityVelocityBlockTimeSum << " microseconds (" << ContinuityVelocityBlockCounter << "calls) (Mean time per call: " << ContinuityVelocityBlockTimeSum / ContinuityVelocityBlockCounter << std::endl;
-      std::cout << "Continuity Pressure Elapsed time: " << ContinuityPressureBlockTimeSum << " microseconds (" << ContinuityPressureBlockCounter << "calls) (Mean time per call: " << ContinuityPressureBlockTimeSum / ContinuityPressureBlockCounter << std::endl;
-      std::cout << "Total AEG Elapsed time: " << TotalTime << " microseconds" << std::endl;
-      std::cout << "Sum of Elapsed time: " << IntroductionTime + ForloopIntroductionTimeSum + MomentumVelocityBlockTimeSum + MomentumPressureBlockTimeSum + ContinuityVelocityBlockTimeSum + ContinuityPressureBlockTimeSum<< " microseconds" << std::endl;
-      std::cout << "--------------------- Next AEG call ---------------------\n" << std::endl;
+      // std::cout << "ir.GetNPoints() = " << ir.GetNPoints() << ", dim = " << dim << ", dof_u = " << dof_u << ", dof_p = " << dof_p << std::endl;
+      // std::cout << "---------------------- AEG  Profile -------------------" << std::endl;
+      // std::cout << "Introduction Elapsed time: " << IntroductionTime << " microseconds (1 call)" << std::endl;
+      // std::cout << "For-loop Introduction Elapsed time: " << ForloopIntroductionTimeSum << " microseconds (" << ForloopIntroductionCounter << "calls) (Mean time per call: " << ForloopIntroductionTimeSum / ForloopIntroductionCounter << std::endl;
+      // std::cout << "Momentum Velocity Block Elapsed time: " << MomentumVelocityBlockTimeSum << " microseconds (" << MomentumVelocityBlockCounter1 << " & " << MomentumVelocityBlockCounter2 << "calls) (Mean time per call: " << MomentumVelocityBlockTimeSum / MomentumVelocityBlockCounter1 << std::endl;   
+      // std::cout << "Momentum Pressure Block Elapsed time: " << MomentumPressureBlockTimeSum << " microseconds (" << MomentumPressureBlockCounter << "calls) (Mean time per call: " << MomentumPressureBlockTimeSum / MomentumPressureBlockCounter << std::endl;
+      // std::cout << "Continuity Velocity Elapsed time: " << ContinuityVelocityBlockTimeSum << " microseconds (" << ContinuityVelocityBlockCounter << "calls) (Mean time per call: " << ContinuityVelocityBlockTimeSum / ContinuityVelocityBlockCounter << std::endl;
+      // std::cout << "Continuity Pressure Elapsed time: " << ContinuityPressureBlockTimeSum << " microseconds (" << ContinuityPressureBlockCounter << "calls) (Mean time per call: " << ContinuityPressureBlockTimeSum / ContinuityPressureBlockCounter << std::endl;
+      // std::cout << "Total AEG Elapsed time: " << TotalTime << " microseconds" << std::endl;
+      // std::cout << "Sum of Elapsed time: " << IntroductionTime + ForloopIntroductionTimeSum + MomentumVelocityBlockTimeSum + MomentumPressureBlockTimeSum + ContinuityVelocityBlockTimeSum + ContinuityPressureBlockTimeSum<< " microseconds" << std::endl;
+      // std::cout << "--------------------- Next AEG call ---------------------\n" << std::endl;
+
+      std::cout << IntroductionTime << " " << ForloopIntroductionTimeSum << " " << MomentumVelocityBlockTimeSum << " " << MomentumPressureBlockTimeSum << " " << ContinuityVelocityBlockTimeSum << " " << ContinuityPressureBlockTimeSum << " " << TotalTime << std::endl;
    }
 
 }
