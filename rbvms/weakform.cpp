@@ -336,8 +336,7 @@ void IncNavStoIntegrator::AssembleElementGrad(
 
    // For-loop dimensions:
    // ir.GetNPoints(), dim, dof_u, dof_p
-   std::cout << "ir.GetNPoints() = " << ir.GetNPoints() << ", dim = " << dim << ", dof_u = " << dof_u << ", dof_p = " << dof_p << std::endl;
-
+   
    for (int i = 0; i < ir.GetNPoints(); ++i)
    {
       // Start Measuring Time
@@ -523,6 +522,7 @@ void IncNavStoIntegrator::AssembleElementGrad(
 
    bool printMeasurements = false;
    if (printMeasurements){
+      std::cout << "ir.GetNPoints() = " << ir.GetNPoints() << ", dim = " << dim << ", dof_u = " << dof_u << ", dof_p = " << dof_p << std::endl;
       std::cout << "---------------------- AEG  Profile -------------------" << std::endl;
       std::cout << "Introduction Elapsed time: " << IntroductionTime << " microseconds (1 call)" << std::endl;
       std::cout << "For-loop Introduction Elapsed time: " << ForloopIntroductionTimeSum << " microseconds (" << ForloopIntroductionCounter << "calls) (Mean time per call: " << ForloopIntroductionTimeSum / ForloopIntroductionCounter << std::endl;
