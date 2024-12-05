@@ -40,7 +40,6 @@ void JacobianPreconditioner::SetOperator(const Operator &op)
       //std::cout << "\nSetting preconditioner as operator" << std::endl;
       
       if (Resetter)
-         std::cout << "Setting precon as operator\n";
          prec[i]->SetOperator(jacobian->GetBlock(i,i));
       SetDiagonalBlock(i, prec[i]);
 
