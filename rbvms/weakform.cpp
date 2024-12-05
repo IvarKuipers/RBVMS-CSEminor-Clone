@@ -509,7 +509,6 @@ void IncNavStoIntegrator::AssembleElementGrad(
       auto TimeEnd6 = std::chrono::high_resolution_clock::now();
       
       bool TimeMeasurement = true;
-      bool printMeasurements = true;
 
       if (TimeMeasurement){
          ForloopIntroductionCounter++;
@@ -531,6 +530,7 @@ void IncNavStoIntegrator::AssembleElementGrad(
       }
    }
 
+   bool printMeasurements = true;
    if (printMeasurements){
       auto IntroductionTime = std::chrono::duration_cast<std::chrono::microseconds>(TimeEnd1 - TimeStart1).count();
       auto TotalTimeEnd = std::chrono::high_resolution_clock::now();
