@@ -460,9 +460,9 @@ void IncNavStoIntegrator::AssembleElementGrad(
 
       auto TimeStart4 = std::chrono::high_resolution_clock::now();
       // Momentum - Pressure block (w,p) & // Continuity - Velocity block (q,u)
-      for (int j_u = 0; j_u < dof_u; ++j_u)
+      for (int dim_u = 0; dim_u < dim; ++dim_u)
       {
-         for (int dim_u = 0; dim_u < dim; ++dim_u)
+         for (int j_u = 0; j_u < dof_u; ++j_u)
          {
             for (int i_p = 0; i_p < dof_p; ++i_p)
             {
@@ -485,9 +485,9 @@ void IncNavStoIntegrator::AssembleElementGrad(
 
       auto TimeStart5 = std::chrono::high_resolution_clock::now();
       // Continuity - Velocity block (q,u)
-      for (int j_u = 0; j_u < dof_u; ++j_u)
+      for (int dim_u = 0; dim_u < dim; ++dim_u)
       {
-         for (int dim_u = 0; dim_u < dim; ++dim_u)
+         for (int j_u = 0; j_u < dof_u; ++j_u)
          {
             for (int i_p = 0; i_p < dof_p; ++i_p)
             {
