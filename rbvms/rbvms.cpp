@@ -449,6 +449,8 @@ int main(int argc, char *argv[])
       if (Mpi::Root())
       {std::cout << std::endl <<"Time taken for one Time step: " << newton_duration/1000.0 << " seconds"<<  std::endl;}
       si++;
+      //Reset the operator for the next time step
+      jac_prec.ResetOperatorSetup();
 
       // Postprocess solution
       real_t cfl = evo.GetCFL();
