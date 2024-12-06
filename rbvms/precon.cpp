@@ -21,7 +21,7 @@ void JacobianPreconditioner::SetOperator(const Operator &op)
       std::cout << "Making a new precondtioner\n";
    }
    
-   prec[0]->SetOperator(jacobian->GetBlock(0,0));
+   //prec[0]->SetOperator(jacobian->GetBlock(0,0));
    if (prec[1] == nullptr)
    {
       HypreParMatrix* Jpp = dynamic_cast<HypreParMatrix*>(&jacobian->GetBlock(1,1));
@@ -40,7 +40,7 @@ void JacobianPreconditioner::SetOperator(const Operator &op)
    for (int i = 0; i < prec.Size(); ++i)
    {
       //std::cout << "\nSetting preconditioner as operator" << std::endl;
-      //prec[i]->SetOperator(jacobian->GetBlock(i,i));
+      prec[i]->SetOperator(jacobian->GetBlock(i,i));
       SetDiagonalBlock(i, prec[i]);
 
       for (int j = i+1; j < prec.Size(); ++j)
