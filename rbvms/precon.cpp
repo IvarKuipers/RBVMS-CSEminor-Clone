@@ -12,7 +12,9 @@ using namespace RBVMS;
 
 // Set the diagonal and off-diagonal operators
 void JacobianPreconditioner::SetOperator(const Operator &op)
-{
+{  
+   if (is_operator_set){return;}
+
    BlockOperator *jacobian = (BlockOperator *) &op;
 
    if (prec[0] == nullptr)
@@ -49,6 +51,12 @@ void JacobianPreconditioner::SetOperator(const Operator &op)
          SetBlock(j,i, const_cast<Operator*>(&jacobian->GetBlock(j,i)));
       }
    }
+   is_operator_set = true;
+}
+
+void JacobianPreconditioner::ResetOperatorSetup()
+{
+   is_operator_set = false;
 }
 
 // Destructor
