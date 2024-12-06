@@ -80,7 +80,6 @@ private:
 
    /// Conservative boundary forces
    mutable DenseMatrix bdrForce;
-   mutable bool hasGrad;
 
 public:
    /// Constructor
@@ -96,8 +95,6 @@ public:
    void SetTimeAndSolution(const real_t t,
                            const real_t dt,
                            const Vector &x0);
-
-   void ResetGradient();
 
    /// Get the CFL-Number
    real_t GetCFL() { return cfl;};
