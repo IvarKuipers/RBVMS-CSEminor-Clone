@@ -22,13 +22,16 @@ class JacobianPreconditioner : public
 {
 protected:
    Array<Solver *> prec;
+   bool is_operator_set;
 
 public:
    /// Constructor
    JacobianPreconditioner(Array<int> &offsets)
-      : BlockLowerTriangularPreconditioner (offsets), prec(offsets.Size()-1)
+      : BlockLowerTriangularPreconditioner (offsets), prec(offsets.Size()-1), is_operator_set(false)
    { prec = nullptr;};
 
+   //Reset the Boolean
+   virtual void ResetOperatorSetup();
    /// Set the diagonal and off-diagonal operators
    virtual void SetOperator(const Operator &op);
 
