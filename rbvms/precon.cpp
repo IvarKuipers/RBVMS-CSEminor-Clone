@@ -27,7 +27,7 @@ void JacobianPreconditioner::SetOperator(const Operator &op)
       HypreParMatrix* Jpp = dynamic_cast<HypreParMatrix*>(&jacobian->GetBlock(1,1));
       HypreParMatrix *Jpp2 = const_cast<HypreParMatrix*>(Jpp);
     //  prec[1] = new HypreSmoother();//*Jpp);
-      HypreILU *ilu = new HypreILU(*Jpp);
+      HypreILU *ilu = new HypreILU();
       //Parasails->SetType(HypreSmoother::FIR);
       //Parasails->SetParams(0.05, 1);
       //Parasails->SetFilter(0.01); 
