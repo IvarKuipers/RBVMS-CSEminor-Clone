@@ -14,8 +14,8 @@ using namespace RBVMS;
 void JacobianPreconditioner::SetOperator(const Operator &op)
 {  
    BlockOperator *jacobian = (BlockOperator *) &op;
-   std::cout << "Operator address for block " << 0 << ": " << jacobian->GetBlock(0,0) << std::endl;
-   std::cout << "Operator address for block " << 1 << ": " << jacobian->GetBlock(1,1) << std::endl;
+   std::cout << "Operator address for block " << 0 << ": " << &jacobian->GetBlock(0,0) << std::endl;
+   std::cout << "Operator address for block " << 1 << ": " << &jacobian->GetBlock(1,1) << std::endl;
    if (is_operator_set){
       
       for (int i = 0; i < prec.Size(); ++i)
