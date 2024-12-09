@@ -15,7 +15,7 @@ void JacobianPreconditioner::SetOperator(const Operator &op)
 {  
    BlockOperator *jacobian = (BlockOperator *) &op;
    if (is_operator_set){
-      
+      if(prec[0] == nullptr){std::cout << "Precon is not initialized" << std::endl;}
       for (int i = 0; i < prec.Size(); ++i)
       {
          std::cout << "\nSetting old preconditioner as operator" << std::endl;
