@@ -79,7 +79,6 @@ void JacobianPreconditioner::ResetOperatorSetup()
 // Destructor
 JacobianPreconditioner::~JacobianPreconditioner()
 {
-   std::cout << "Calling the destructor" << std::endl;
    for (int i = 0; i < prec.Size(); ++i)
    {
       delete prec[i];
