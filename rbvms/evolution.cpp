@@ -25,7 +25,7 @@ void Evolution::ImplicitSolve(const real_t dt,
                               const Vector &u0, Vector &dudt_)
 {
    
-   if (count % 10 == 0){
+   if (count % 20 == 0){
       std::cout << "\nResetting Jacobi.\nCounter is: "<<count<< std::endl;
       form.ResetGradient();
    }
