@@ -107,6 +107,7 @@ int main(int argc, char *argv[])
    int    GMRES_MaxIter = 500;
    double Newton_RelTol = 1e-3;
    int    Newton_MaxIter = 10;
+   int    PreconCounter = 0; 
 
    args.AddOption(&GMRES_RelTol, "-lt", "--linear-tolerance",
                   "Relative tolerance for the GMRES solver.");
@@ -450,8 +451,9 @@ int main(int argc, char *argv[])
       {std::cout << std::endl <<"Time taken for one Time step: " << newton_duration/1000.0 << " seconds"<<  std::endl;}
       si++;
       //Reset the preconditioner for the next time step
-      jac_prec.ResetOperatorSetup();
-
+      if (PreconCounter % 2){
+         jac_prec.ResetOperatorSetup();
+      }
       // Postprocess solution
       real_t cfl = evo.GetCFL();
       DenseMatrix bdrForce = evo.GetForce();
