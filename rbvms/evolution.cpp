@@ -24,10 +24,14 @@ Evolution::Evolution(ParTimeDepBlockNonlinForm &form,
 void Evolution::ImplicitSolve(const real_t dt,
                               const Vector &u0, Vector &dudt_)
 {
-   form.ResetGradient();
+   int count = 0;
+   if (count % 2 == 0){
+      form.ResetGradient();
+   }
    form.SetTimeAndSolution(t, dt, u0);
    Vector zero;
    solver.Mult(zero, dudt);
+   ++count;
    dudt_ = dudt;
 }
 
