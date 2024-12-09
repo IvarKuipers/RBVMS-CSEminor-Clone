@@ -26,7 +26,7 @@ void Evolution::ImplicitSolve(const real_t dt,
 {
    int count = 0;
    if (count % 2 == 0){
-      std::cout << "Resetting Jacobi" << std::endl;
+      std::cout << "Resetting Jacobi. Counter is: "<<count<< std::endl;
       form.ResetGradient();
    }
    form.SetTimeAndSolution(t, dt, u0);
