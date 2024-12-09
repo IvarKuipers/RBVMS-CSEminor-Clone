@@ -19,7 +19,7 @@ void JacobianPreconditioner::SetOperator(const Operator &op)
       for (int i = 0; i < prec.Size(); ++i)
       {
          std::cout << "\nSetting old preconditioner as operator" << std::endl;
-         SetOperator(jacobian->GetBlock(i,i));
+         prec[i]->SetOperator(jacobian->GetBlock(i,i));
          SetDiagonalBlock(i, prec[i]);
 
          for (int j = i+1; j < prec.Size(); ++j)
