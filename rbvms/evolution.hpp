@@ -29,6 +29,7 @@ private:
    ParTimeDepBlockNonlinForm &form;
    Solver &solver;
    Vector dudt;
+   int count = 0;
 
 public:
    /// Constructor
