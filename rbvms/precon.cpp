@@ -14,8 +14,8 @@ using namespace RBVMS;
 void JacobianPreconditioner::SetOperator(const Operator &op)
 {  
    BlockOperator *jacobian = (BlockOperator *) &op;
-   std::cout << "Operator address for block " << 0 << ": " << &jacobian->GetBlock(0,0) << std::endl;
-   std::cout << "Operator address for block " << 1 << ": " << &jacobian->GetBlock(1,1) << std::endl;
+   //std::cout << "Operator address for block " << 0 << ": " << &jacobian->GetBlock(0,0) << std::endl;
+   //std::cout << "Operator address for block " << 1 << ": " << &jacobian->GetBlock(1,1) << std::endl;
    if (is_operator_set){
       
       for (int i = 0; i < prec.Size(); ++i)
@@ -37,7 +37,7 @@ void JacobianPreconditioner::SetOperator(const Operator &op)
    if (prec[0] == nullptr)
    {
       prec[0] = new HypreILU();//*Jpp);new HypreSmoother();//HypreILU()
-      std::cout << "Making a new precondtioner\n";
+      //std::cout << "Making a new precondtioner\n";
    }
    
    //prec[0]->SetOperator(jacobian->GetBlock(0,0));
@@ -53,13 +53,13 @@ void JacobianPreconditioner::SetOperator(const Operator &op)
       //Parasails->SetReuse(1);        
       //Parasails->SetLogging(1); 
       prec[1] = ilu;//*Jpp);
-      std::cout << "Making a new precondtioner\n";
+      //std::cout << "Making a new precondtioner\n";
    }
   // std::cout << "Setting Operator for block 1,1" << std::endl;
    
    for (int i = 0; i < prec.Size(); ++i)
    {
-      std::cout << "\nSetting preconditioner as operator" << std::endl;
+      std::cout << "\nSetting new preconditioner as operator" << std::endl;
       prec[i]->SetOperator(jacobian->GetBlock(i,i));
       SetDiagonalBlock(i, prec[i]);
 

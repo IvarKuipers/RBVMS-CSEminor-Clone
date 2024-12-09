@@ -452,7 +452,7 @@ int main(int argc, char *argv[])
       {std::cout << std::endl <<"Time taken for one Time step: " << newton_duration/1000.0 << " seconds"<<  std::endl;}
       si++;
       //Reset the preconditioner for the next time step
-      if (PreconCounter % 2 == 0){
+      if (PreconCounter % 10 == 0){
          jac_prec.ResetOperatorSetup();
       }
       // Postprocess solution
