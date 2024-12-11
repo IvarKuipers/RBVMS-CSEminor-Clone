@@ -1,11 +1,12 @@
+#-------------------------------------------------------------------------------
 # This file is part of the RBVMS application.
 #
-# RBVMSis free software; you can redistribute it and/or modify it under the
+# RBVMS is free software; you can redistribute it and/or modify it under the
 # terms of the BSD-3 license. We welcome feedback and contributions, see file
 # CONTRIBUTING.md for details.
 #-------------------------------------------------------------------------------
-cmake_minimum_required(VERSION 3.8)
-project(RBVMS LANGUAGES CXX C)
+cmake_minimum_required(VERSION 3.17)
+project(RBVMS LANGUAGES CXX C CUDA)
 
 #-------------------------------------------------------------------------------
 # Add Files
@@ -78,10 +79,15 @@ message(STATUS "MFEM_LIBRARIES = ${MFEM_LIBRARIES}")
 include_directories(${MFEM_INCLUDE_DIRS})
 
 #-------------------------------------------------------------------------------
+# Add CUDA
+#-------------------------------------------------------------------------------
+find_package(CUDA REQUIRED)
+include_directories(${CUDA_INCLUDE_DIRS})
+
+#-------------------------------------------------------------------------------
 # Build executable
 #-------------------------------------------------------------------------------
 add_executable(rbvms rbvms.cpp ${SOURCES} ${HEADERS})
 
-target_link_libraries(rbvms PRIVATE ${MFEM_LIBRARIES})
+target_link_libraries(rbvms PRIVATE ${MFEM_LIBRARIES} ${CUDA_LIBRARIES})
 install(TARGETS rbvms DESTINATION bin)
-

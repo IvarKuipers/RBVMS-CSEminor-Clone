@@ -30,7 +30,7 @@ extern void line(int len);
 
 int main(int argc, char *argv[])
 {
-   // 1. Initialize MPI and HYPRE and print info
+   // 1. Initialize MPI and HYPRE, print info and hardware divices.
    Mpi::Init(argc, argv);
    int num_procs = Mpi::WorldSize();
    int myid = Mpi::WorldRank();
@@ -39,6 +39,11 @@ int main(int argc, char *argv[])
 
    // 2. Parse command-line options.
    OptionsParser args(argc, argv);
+
+   // Hardware parameters
+   const char *device_config = "cpu";
+   args.AddOption(&device_config, "-d", "--device",
+                  "Device configuration string, see Device::Configure().");
 
    // Mesh and discretization parameters
    const char *mesh_file = "../../mfem/data/inline-quad.mesh";
@@ -137,6 +142,10 @@ int main(int argc, char *argv[])
    }
    if (Mpi::Root()) { args.PrintOptions(cout); }
 
+   // Setting device
+   Device device(device_config);
+   if (myid == 0) { device.Print(); }
+   
    // 3. Read the mesh from the given mesh file.
    Mesh mesh(mesh_file, 1, 1);
    int dim = mesh.Dimension();
@@ -594,4 +603,3 @@ int main(int argc, char *argv[])
 
    return 0;
 }
-
