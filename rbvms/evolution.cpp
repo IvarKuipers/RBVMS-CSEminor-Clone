@@ -483,7 +483,7 @@ void ParTimeDepBlockNonlinForm
          }
       }
 
-      integrator.AssembleElementGrad(fe, *T, el_x_const,el_dx_const, elmats);
+      integrator.AssembleElementGrad2(fe, *T, el_x_const,el_dx_const, elmats);
 
       for (int j=0; j<fes.Size(); ++j)
       {
