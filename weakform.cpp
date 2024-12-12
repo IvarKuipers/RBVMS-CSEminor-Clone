@@ -302,14 +302,15 @@ void IncNavStoIntegrator::AssembleElementGrad(
    sh_p.SetSize(dof_p);
    shg_p.SetSize(dof_p, dim);
 
+   //R - initialize matrices and vectors with correct size
    DenseMatrix mat_matrix, mu_mat, tau_mat, wp_mat, qu_mat;
+   Vector shg_u_1_vec, shg_u_2_vec, shg_p_vec;
+
    mat_matrix.SetSize(dof_u,dof_u);
    mu_mat.SetSize(dof_u,dof_u);
    tau_mat.SetSize(dof_u,dof_u);
    wp_mat.SetSize(dof_u,dof_u);
    qu_mat.SetSize(dof_u,dof_u);
-
-   Vector shg_u_1_vec, shg_u_2_vec, shg_p_vec;
 
    int intorder = 2*el[0]->GetOrder();
    const IntegrationRule &ir = IntRules.Get(el[0]->GetGeomType(), intorder);
@@ -319,8 +320,10 @@ void IncNavStoIntegrator::AssembleElementGrad(
       const IntegrationPoint &ip = ir.IntPoint(i);
       Tr.SetIntPoint(&ip);
       real_t w = ip.weight * Tr.Weight();
-      const real_t w_dt = w*dt;
       real_t mu = c_mu.Eval(Tr, ip);
+
+      //R - cache const variables re-used in inner loops
+      const real_t w_dt = w*dt;
       const real_t mu_dt = mu*dt;
 
       el[0]->CalcPhysShape(Tr, sh_u);
@@ -380,63 +383,72 @@ void IncNavStoIntegrator::AssembleElementGrad(
       // Recompute convective gradient
       MultAtB(elf_u, shg_u, grad_u);
 
-      ///////////////////////////
-      //MAT PROBEERSELS
-      ///////////////////////////
+      ///////////////////
+      // Vectorization //
+      ///////////////////
       
-      // Initialize matrices
-      mat_matrix = 0.0;
-     
-      
-      // Diffusion term
+      // R -   Reset matrix. Sets all values of mat_matrix to 0. 
+      mat_matrix = 0.0; 
+
+      // Diffusion term. mat_matrix = shg_u * shg_u^T
       MultAAt(shg_u, mat_matrix);
       mat_matrix *= mu_dt;
 
-      // Acceleration term
+      // Acceleration term. mat_matrix += sh_u * sh_u^T
       AddMultVVt(sh_u, mat_matrix);
       
       // Convection terms   /// VWt += a * v w^t void AddMult_a_VWt(const real_t a, const Vector &v, const Vector &w, DenseMatrix &VWt);
       AddMult_a_VWt(-dt, ushg_u, sh_u, mat_matrix);
-      real_t tempy =  -1.0;
+      const real_t tempy =  -1.0;   //Temporary constant to simulate -= when using AddMult_a_VWt()
       AddMult_a_VWt(tempy, ushg_u, dupdu, mat_matrix);
       mat_matrix *= w;
 
-      for (int dim_u = 0; dim_u < dim; ++dim_u){
-      elmats(0,0)->AddSubMatrix(dim_u * dof_u, mat_matrix);}
+      // Adds blocks of (dof_u, dof_u) to diagonals for every dimension. The matrix is the same for all dimensions.
+      for (int dim_u = 0; dim_u < dim; ++dim_u)
+      {
+         elmats(0,0)->AddSubMatrix(dim_u * dof_u, mat_matrix);
+      }
       
       // Momentum - Velocity block (w,u)
       for (int i_dim = 0; i_dim < dim; ++i_dim)
          {
+            // Getting columns for outer product
             shg_u.GetColumn(i_dim, shg_u_2_vec);
             for (int j_dim = 0; j_dim < dim; ++j_dim)
             {
                shg_u.GetColumn(j_dim, shg_u_1_vec);
 
-               AddMult_a_VWt(w_dt*mu, shg_u_2_vec, shg_u_1_vec, mu_mat);
-               elmats(0,0)->AddSubMatrix(i_dim * dof_u, j_dim * dof_u, mu_mat);
                mu_mat = 0.0;
-
-
-               AddMult_a_VWt(w_dt*tau_c,  shg_u_2_vec, shg_u_1_vec, tau_mat);
-               elmats(0,0)->AddSubMatrix(i_dim * dof_u, j_dim * dof_u, tau_mat);
+               // R -   Outer product times scalar, store in mu_mat
+               AddMult_a_VWt(w_dt*mu, shg_u_2_vec, shg_u_1_vec, mu_mat);
+               // R -   Add mu_mat as a block to elmats
+               elmats(0,0)->AddSubMatrix(i_dim * dof_u, j_dim * dof_u, mu_mat);
+               
                tau_mat = 0.0;
+               // R -   Outer product times scalar, store in tau_mat
+               AddMult_a_VWt(w_dt*tau_c,  shg_u_2_vec, shg_u_1_vec, tau_mat);
+               // R -   Add tau_mat as a block to elmats
+               elmats(0,0)->AddSubMatrix(i_dim * dof_u, j_dim * dof_u, tau_mat);
             }
-
          }
-      // Momentum - Pressure block (w,p)
 
+      // Momentum - Pressure block (w,p)
       for (int dim_u = 0; dim_u < dim; ++dim_u)
       {
          wp_mat = 0.0;
+
+         // Getting columns for outer product
          shg_p.GetColumn(dim_u, shg_p_vec);
          shg_u.GetColumn(dim_u, shg_u_1_vec);
 
-         AddMult_a_VWt(tau_m * w_dt,  ushg_u, shg_p_vec, wp_mat);
-         AddMult_a_VWt(-w_dt,  shg_u_1_vec, sh_p, wp_mat);
+         // R -   Outer product times scalar, store in wp_mat
+         AddMult_a_VWt(tau_m * w_dt, ushg_u, shg_p_vec, wp_mat);
+         AddMult_a_VWt(-w_dt, shg_u_1_vec, sh_p, wp_mat);
 
+         // R -   Add wp_mat as a block to elmats
          elmats(0,1)->AddSubMatrix(dim_u * dof_u, 0, wp_mat);
-         
       }
+
       // Continuity - Velocity block (q,u)
       for (int dim_u = 0; dim_u < dim; ++dim_u)
       {
@@ -450,9 +462,8 @@ void IncNavStoIntegrator::AssembleElementGrad(
          elmats(1,0)->AddSubMatrix(0, dim_u * dof_u, qu_mat);
       }
       // Continuity - Pressure block (w,p)
-      AddMult_a_AAt(-w*tau_m*dt, shg_p, *elmats(1,1));
+      AddMult_a_AAt(-w_dt*tau_m, shg_p, *elmats(1,1));
    }
-
 }   
 
 // Assemble the outflow boundary residual vectors
