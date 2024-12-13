@@ -16,21 +16,21 @@ void JacobianPreconditioner::SetOperator(const Operator &op)
    BlockOperator *jacobian = (BlockOperator *) &op;
    //std::cout << "Operator address for block " << 0 << ": " << &jacobian->GetBlock(0,0) << std::endl;
    //std::cout << "Operator address for block " << 1 << ": " << &jacobian->GetBlock(1,1) << std::endl;
-   if (is_operator_set){
+   // if (is_operator_set){
       
-      for (int i = 0; i < prec.Size(); ++i)
-      {
-         //std::cout << "\nSetting old preconditioner as operator" << std::endl;
-         SetDiagonalBlock(i, prec[i]);
+   //    for (int i = 0; i < prec.Size(); ++i)
+   //    {
+   //       //std::cout << "\nSetting old preconditioner as operator" << std::endl;
+   //       SetDiagonalBlock(i, prec[i]);
 
-         for (int j = i+1; j < prec.Size(); ++j)
-         {
-            SetBlock(j,i, const_cast<Operator*>(&jacobian->GetBlock(j,i)));
-         }
-      }
+   //       for (int j = i+1; j < prec.Size(); ++j)
+   //       {
+   //          SetBlock(j,i, const_cast<Operator*>(&jacobian->GetBlock(j,i)));
+   //       }
+   //    }
 
-      return;
-      }
+   //    return;
+   //    }
 
    
 
@@ -68,7 +68,7 @@ void JacobianPreconditioner::SetOperator(const Operator &op)
          SetBlock(j,i, const_cast<Operator*>(&jacobian->GetBlock(j,i)));
       }
    }
-   is_operator_set = true;
+   //is_operator_set = true;
 }
 
 void JacobianPreconditioner::ResetOperatorSetup()
