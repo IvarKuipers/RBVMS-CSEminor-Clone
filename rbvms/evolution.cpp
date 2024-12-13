@@ -25,14 +25,12 @@ void Evolution::ImplicitSolve(const real_t dt,
                               const Vector &u0, Vector &dudt_)
 {
    
-   // if (count % 20 == 0){
-   //    std::cout << "\nResetting Jacobi.\nCounter is: "<<count<< std::endl;
-   //    form.ResetGradient();
-   // }
-   form.ResetGradient();
+   if (count % 20 == 0){
+      std::cout << "\nResetting Jacobi.\nCounter is: "<<count<< std::endl;
+      form.ResetGradient();
+   }
    form.SetTimeAndSolution(t, dt, u0);
    Vector zero;
-   std::cout << "Solving" << std::endl;
    solver.Mult(zero, dudt);
    count++;
    dudt_ = dudt;
@@ -333,7 +331,6 @@ BlockOperator & ParTimeDepBlockNonlinForm::GetGradient(const Vector &x) const
 
    if (pBlockGrad == NULL)
    {
-
       pBlockGrad = new BlockOperator(block_trueOffsets);
    }
 
@@ -348,7 +345,7 @@ BlockOperator & ParTimeDepBlockNonlinForm::GetGradient(const Vector &x) const
          phBlockGrad(s1,s2)->Clear();
       }
    }
-   std::cout << "Remaking the Jacobian" << std::endl;
+
    GetLocalGradient(x); // gradients are stored in 'Grads'
 
    if (fnfi.Size() > 0)

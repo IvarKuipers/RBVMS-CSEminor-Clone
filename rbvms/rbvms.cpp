@@ -454,9 +454,9 @@ int main(int argc, char *argv[])
       {std::cout << std::endl <<"Time taken for one Time step: " << newton_duration/1000.0 << " seconds"<<  std::endl;}
       si++;
       //Reset the preconditioner for the next time step
-      // if (PreconCounter % 20 == 0){
-      //    jac_prec.ResetOperatorSetup();
-      // }
+      if (PreconCounter % 20 == 0){
+         jac_prec.ResetOperatorSetup();
+      }
       // Postprocess solution
       real_t cfl = evo.GetCFL();
       DenseMatrix bdrForce = evo.GetForce();
