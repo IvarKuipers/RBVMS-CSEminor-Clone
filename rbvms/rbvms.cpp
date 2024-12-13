@@ -109,6 +109,7 @@ int main(int argc, char *argv[])
    int    Newton_MaxIter = 10;
    int    PreconCounter = 0; 
    const int maxRetries = 3;
+   
 
 
    args.AddOption(&GMRES_RelTol, "-lt", "--linear-tolerance",
@@ -215,12 +216,14 @@ int main(int argc, char *argv[])
    bOffsets[1] = spaces[0]->TrueVSize();
    bOffsets[2] = spaces[1]->TrueVSize();
    bOffsets.PartialSum();
+   //Define residual vector size
+   int nvar = bOffsets.Size()-1;
 
    // 5. Define the time stepping algorithm
 
    // Set up the preconditioner
    RBVMS::JacobianPreconditioner jac_prec(bOffsets);
-   std::cout << "Preconditioner has been made\n";
+   //std::cout << "Preconditioner has been made\n";
    // Set up the Jacobian solver
    RBVMS::GeneralResidualMonitor j_monitor(MPI_COMM_WORLD,"\t\tFGMRES", 25);
    FGMRESSolver j_gmres(MPI_COMM_WORLD);
@@ -244,7 +247,8 @@ int main(int argc, char *argv[])
    newton_solver.SetAbsTol(1e-12);
    newton_solver.SetMaxIter(Newton_MaxIter );
    newton_solver.SetSolver(j_gmres);
-
+   Vector SystemResiduals(nvar);
+    
    // Define the physical parameters
    LibVectorCoefficient sol(dim, lib_file, "sol_u");
    LibCoefficient mu(lib_file, "mu", false, mu_param);

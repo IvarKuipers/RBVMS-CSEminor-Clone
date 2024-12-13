@@ -74,6 +74,15 @@ SystemResidualMonitor::SystemResidualMonitor(MPI_Comm comm,
    norm0.SetSize(nvar);
 }
 
+void SystemResidualMonitor::ComputeResiduals(const Vector &r, Vector &vnorm)
+{
+   for (int i = 0; i < nvar; ++i)
+   {
+      Vector r_i(r.GetData() + bOffsets[i], bOffsets[i + 1] - bOffsets[i]);
+      vnorm[i] = sqrt(InnerProduct(MPI_COMM_WORLD, r_i, r_i));
+   }
+}
+
 // Print residual
 void SystemResidualMonitor::MonitorResidual(int it,
                                             real_t norm,
@@ -82,11 +91,9 @@ void SystemResidualMonitor::MonitorResidual(int it,
 {
    static auto Newt_start = std::chrono::high_resolution_clock::now();
    Vector vnorm(nvar);
-
+   ComputeResiduals(r, vnorm);
    for (int i = 0; i < nvar; ++i)
    {
-      Vector r_i(r.GetData() + bOffsets[i], bOffsets[i+1] - bOffsets[i]);
-      vnorm[i] = sqrt(InnerProduct(MPI_COMM_WORLD, r_i, r_i));
       if (it == 0) { norm0[i] = vnorm[i];  Newt_start = std::chrono::high_resolution_clock::now();}
    }
 

@@ -54,6 +54,9 @@ public:
                          int print_lvl,
                          Array<int> &offsets);
 
+   /// Calculate residual
+   virtual void ComputeResiduals(const Vector &r);
+   
    /// Print residual
    virtual void MonitorResidual(int it,
                                 real_t norm,
