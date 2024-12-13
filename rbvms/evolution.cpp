@@ -24,11 +24,6 @@ Evolution::Evolution(ParTimeDepBlockNonlinForm &form,
 void Evolution::ImplicitSolve(const real_t dt,
                               const Vector &u0, Vector &dudt_)
 {
-   
-   if (count % 20 == 0){
-      std::cout << "\nResetting Jacobi.\nCounter is: "<<count<< std::endl;
-      form.ResetGradient();
-   }
    form.SetTimeAndSolution(t, dt, u0);
    Vector zero;
    solver.Mult(zero, dudt);

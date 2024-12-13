@@ -469,6 +469,10 @@ int main(int argc, char *argv[])
       
       //Reset the preconditioner for the next time step
       if (PreconCounter % 20 == 0){
+         line(80);
+         std::cout << "\nResetting the setup\n" << std::endl;
+         line(80);
+         form.ResetGradient();
          jac_prec.ResetOperatorSetup();
       }
 
