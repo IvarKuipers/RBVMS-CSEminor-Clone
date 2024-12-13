@@ -445,16 +445,18 @@ int main(int argc, char *argv[])
       xp0 = xp;
       auto newton_start = std::chrono::high_resolution_clock::now();
       ode_solver->Step(xp, t, dt);
+
       PreconCounter++;
+      
       auto newton_end = std::chrono::high_resolution_clock::now();
       auto newton_duration = std::chrono::duration_cast<std::chrono::milliseconds>(newton_end - newton_start).count();
       if (Mpi::Root())
       {std::cout << std::endl <<"Time taken for one Time step: " << newton_duration/1000.0 << " seconds"<<  std::endl;}
       si++;
       //Reset the preconditioner for the next time step
-      if (PreconCounter % 20 == 0){
-         jac_prec.ResetOperatorSetup();
-      }
+      // if (PreconCounter % 20 == 0){
+      //    jac_prec.ResetOperatorSetup();
+      // }
       // Postprocess solution
       real_t cfl = evo.GetCFL();
       DenseMatrix bdrForce = evo.GetForce();
