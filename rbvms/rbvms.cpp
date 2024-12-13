@@ -108,6 +108,8 @@ int main(int argc, char *argv[])
    double Newton_RelTol = 1e-3;
    int    Newton_MaxIter = 10;
    int    PreconCounter = 0; 
+   const int maxRetries = 3;
+
 
    args.AddOption(&GMRES_RelTol, "-lt", "--linear-tolerance",
                   "Relative tolerance for the GMRES solver.");
@@ -252,6 +254,7 @@ int main(int argc, char *argv[])
    RBVMS::IncNavStoIntegrator integrator(mu, force, sol);
    RBVMS::ParTimeDepBlockNonlinForm form(spaces, integrator);
    RBVMS::Evolution evo(form, newton_solver);
+   //maybe include Implicitsolve object so the jacobian can be reset outside evolution
    ode_solver->Init(evo);
 
    // Boundary conditions
@@ -443,6 +446,10 @@ int main(int argc, char *argv[])
 
       // Actual time step
       xp0 = xp;
+      bool succes = true;
+      int retries = 0;
+      while(!succes && retries <= maxRetries)
+      {}
       auto newton_start = std::chrono::high_resolution_clock::now();
       ode_solver->Step(xp, t, dt);
 
@@ -451,12 +458,18 @@ int main(int argc, char *argv[])
       auto newton_end = std::chrono::high_resolution_clock::now();
       auto newton_duration = std::chrono::duration_cast<std::chrono::milliseconds>(newton_end - newton_start).count();
       if (Mpi::Root())
-      {std::cout << std::endl <<"Time taken for one Time step: " << newton_duration/1000.0 << " seconds"<<  std::endl;}
-      si++;
+         {std::cout << std::endl <<"Time taken for one Time step: " << newton_duration/1000.0 << " seconds"<<  std::endl;}
+
+      
+
+      
       //Reset the preconditioner for the next time step
       if (PreconCounter % 20 == 0){
          jac_prec.ResetOperatorSetup();
       }
+
+      si++;
+      
       // Postprocess solution
       real_t cfl = evo.GetCFL();
       DenseMatrix bdrForce = evo.GetForce();
