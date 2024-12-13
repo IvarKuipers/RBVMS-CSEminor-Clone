@@ -896,35 +896,35 @@ void IncNavStoIntegrator::AssembleElementGrad(
    elf_u.UseExternalData(elsol[0]->GetData(), dof_u, dim);
    elf_du.UseExternalData(elrate[0]->GetData(), dof_u, dim);
 
-   elmats(0,0)->SetSize(dof_u*dim, dof_u*dim);
-   elmats(0,1)->SetSize(dof_u*dim, dof_p);
-   elmats(1,0)->SetSize(dof_p, dof_u*dim);
-   elmats(1,1)->SetSize(dof_p, dof_p);
+   // elmats(0,0)->SetSize(dof_u*dim, dof_u*dim);
+   // elmats(0,1)->SetSize(dof_u*dim, dof_p);
+   // elmats(1,0)->SetSize(dof_p, dof_u*dim);
+   // elmats(1,1)->SetSize(dof_p, dof_p);
 
-   *elmats(0,0) = 0.0;
-   *elmats(0,1) = 0.0;
-   *elmats(1,0) = 0.0;
-   *elmats(1,1) = 0.0;
+   // *elmats(0,0) = 0.0;
+   // *elmats(0,1) = 0.0;
+   // *elmats(1,0) = 0.0;
+   // *elmats(1,1) = 0.0;
 
-   // // New way of dereferencing elmats
-   // DenseMatrix &mat_wu = *elmats(0,0);
-   // DenseMatrix &mat_wp = *elmats(0,1);
-   // DenseMatrix &mat_qu = *elmats(1,0);
-   // DenseMatrix &mat_qp = *elmats(1,1);
+   // New way of dereferencing elmats
+   DenseMatrix &mat_wu = *elmats(0,0);
+   DenseMatrix &mat_wp = *elmats(0,1);
+   DenseMatrix &mat_qu = *elmats(1,0);
+   DenseMatrix &mat_qp = *elmats(1,1);
 
    // DenseMatrix mat_wu1(dof_u, dof_u);
 
-   // mat_wu.SetSize(dof_u*dim, dof_u*dim);
-   // mat_wp.SetSize(dof_u*dim, dof_p);
-   // mat_qu.SetSize(dof_p, dof_u*dim);
-   // mat_qp.SetSize(dof_p, dof_p);
+   mat_wu.SetSize(dof_u*dim, dof_u*dim);
+   mat_wp.SetSize(dof_u*dim, dof_p);
+   mat_qu.SetSize(dof_p, dof_u*dim);
+   mat_qp.SetSize(dof_p, dof_p);
 
    // mat_wu1 = 0.0;
-   // mat_wu = 0.0;
-   // mat_wp = 0.0;
-   // mat_qu = 0.0;
-   // mat_qp = 0.0;
-   // // New way of dereferencing elmats
+   mat_wu = 0.0;
+   mat_wp = 0.0;
+   mat_qu = 0.0;
+   mat_qp = 0.0;
+   // New way of dereferencing elmats
 
    sh_u.SetSize(dof_u);
    shg_u.SetSize(dof_u, dim);
@@ -1030,14 +1030,15 @@ void IncNavStoIntegrator::AssembleElementGrad(
       
       // Convection terms   /// VWt += a * v w^t void AddMult_a_VWt(const real_t a, const Vector &v, const Vector &w, DenseMatrix &VWt);
       AddMult_a_VWt(-dt, ushg_u, sh_u, mat_matrix);
-      const real_t tempy =  -1.0;   //Temporary constant to simulate -= when using AddMult_a_VWt()
-      AddMult_a_VWt(tempy, ushg_u, dupdu, mat_matrix);
+      // const real_t tempy =  -1.0;   //Temporary constant to simulate -= when using AddMult_a_VWt()
+      AddMult_a_VWt(-1.0, ushg_u, dupdu, mat_matrix);
       mat_matrix *= w;
 
       // Adds blocks of (dof_u, dof_u) to diagonals for every dimension. The matrix is the same for all dimensions.
       for (int dim_u = 0; dim_u < dim; ++dim_u)
       {
-         elmats(0,0)->AddSubMatrix(dim_u * dof_u, mat_matrix);
+         // elmats(0,0)->AddSubMatrix(dim_u * dof_u, mat_matrix);
+         mat_wu.AddSubMatrix(dim_u*dof_u, mat_matrix);
       }
       
       // Momentum - Velocity block (w,u)
@@ -1053,13 +1054,15 @@ void IncNavStoIntegrator::AssembleElementGrad(
                // R -   Outer product times scalar, store in mu_mat
                AddMult_a_VWt(w_dt*mu, shg_u_2_vec, shg_u_1_vec, mu_mat);
                // R -   Add mu_mat as a block to elmats
-               elmats(0,0)->AddSubMatrix(i_dim * dof_u, j_dim * dof_u, mu_mat);
+               // elmats(0,0)->AddSubMatrix(i_dim * dof_u, j_dim * dof_u, mu_mat);
+               mat_wu.AddSubMatrix(i_dim * dof_u, j_dim * dof_u, mu_mat);
                
                tau_mat = 0.0;
                // R -   Outer product times scalar, store in tau_mat
                AddMult_a_VWt(w_dt*tau_c,  shg_u_2_vec, shg_u_1_vec, tau_mat);
                // R -   Add tau_mat as a block to elmats
-               elmats(0,0)->AddSubMatrix(i_dim * dof_u, j_dim * dof_u, tau_mat);
+               // elmats(0,0)->AddSubMatrix(i_dim * dof_u, j_dim * dof_u, tau_mat);
+               mat_wu.AddSubMatrix(i_dim * dof_u, j_dim * dof_u, tau_mat);
             }
          }
 
@@ -1077,7 +1080,8 @@ void IncNavStoIntegrator::AssembleElementGrad(
          AddMult_a_VWt(-w_dt, shg_u_1_vec, sh_p, wp_mat);
 
          // R -   Add wp_mat as a block to elmats
-         elmats(0,1)->AddSubMatrix(dim_u * dof_u, 0, wp_mat);
+         // elmats(0,1)->AddSubMatrix(dim_u * dof_u, 0, wp_mat);
+         mat_wp.AddSubMatrix(dim_u * dof_u, 0, wp_mat);
       }
 
       // Continuity - Velocity block (q,u)
@@ -1090,10 +1094,12 @@ void IncNavStoIntegrator::AssembleElementGrad(
          AddMult_a_VWt(-w_dt, sh_p, shg_u_1_vec, qu_mat);
          AddMult_a_VWt(w, shg_p_vec, dupdu, qu_mat);
 
-         elmats(1,0)->AddSubMatrix(0, dim_u * dof_u, qu_mat);
+         // elmats(1,0)->AddSubMatrix(0, dim_u * dof_u, qu_mat);
+         mat_qu.AddSubMatrix(0, dim_u * dof_u, qu_mat);
       }
       // Continuity - Pressure block (w,p)
-      AddMult_a_AAt(-w_dt*tau_m, shg_p, *elmats(1,1));
+      // AddMult_a_AAt(-w_dt*tau_m, shg_p, *elmats(1,1));
+      AddMult_a_AAt(-w_dt*tau_m, shg_p, mat_qp);
 
    bool printMeasurements = true;
    if (printMeasurements){
