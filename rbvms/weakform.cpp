@@ -562,7 +562,300 @@ void IncNavStoIntegrator::AssembleElementVector(
 
 
 
-// Assemble the element interior gradient matrices
+// // Assemble the element interior gradient matrices
+// void IncNavStoIntegrator::AssembleElementGrad(
+//    const Array<const FiniteElement*> &el,
+//    ElementTransformation &Tr,
+//    const Array<const Vector *> &elsol,
+//    const Array<const Vector *> &elrate,
+//    const Array2D<DenseMatrix *> &elmats)
+// {
+//    double ForloopIntroductionTime = 0;
+//    double MomentumVelocityBlockTime = 0;
+//    double MomentumPressureBlockTime = 0;
+//    double ContinuityVelocityBlockTime = 0;
+//    double ContinuityPressureBlockTime = 0;
+
+//    double ForloopIntroductionTimeSum = 0;
+//    double MomentumVelocityBlockTimeSum = 0;
+//    double MomentumPressureBlockTimeSum = 0;
+//    double ContinuityVelocityBlockTimeSum = 0;
+//    double ContinuityPressureBlockTimeSum = 0;
+//    double MomentumVelocityBlockCounter1 = 0;
+//    double MomentumVelocityBlockCounter2 = 0;
+//    double MomentumVelocityBlockCounter3 = 0;
+
+//    int ForloopIntroductionCounter = 0;
+//    int MomentumVelocityBlockCounter = 0;
+//    int MomentumPressureBlockCounter = 0;
+//    int ContinuityVelocityBlockCounter = 0;
+//    int ContinuityPressureBlockCounter = 0;
+   
+//    // Start Measuring Time
+//    auto TimeStart1 = std::chrono::high_resolution_clock::now();
+
+//    // Same
+//    int dof_u = el[0]->GetDof();
+//    int dof_p = el[1]->GetDof();
+
+//    bool hess = false;// = (el[0]->GetDerivType() == (int) FiniteElement::HESS);
+
+//    elf_u.UseExternalData(elsol[0]->GetData(), dof_u, dim);
+//    elf_du.UseExternalData(elrate[0]->GetData(), dof_u, dim);
+//    // Same
+
+
+//    // New way of dereferencing elmats
+//    DenseMatrix &mat_wu = *elmats(0,0);
+//    DenseMatrix &mat_wp = *elmats(0,1);
+//    DenseMatrix &mat_qu = *elmats(1,0);
+//    DenseMatrix &mat_qp = *elmats(1,1);
+
+//    DenseMatrix mat_wu1(dof_u, dof_u);
+
+//    mat_wu.SetSize(dof_u*dim, dof_u*dim);
+//    mat_wp.SetSize(dof_u*dim, dof_p);
+//    mat_qu.SetSize(dof_p, dof_u*dim);
+//    mat_qp.SetSize(dof_p, dof_p);
+
+//    mat_wu1 = 0.0;
+//    mat_wu = 0.0;
+//    mat_wp = 0.0;
+//    mat_qu = 0.0;
+//    mat_qp = 0.0;
+//    // New way of dereferencing elmats
+
+
+//    // Same
+//    sh_u.SetSize(dof_u);
+//    shg_u.SetSize(dof_u, dim);
+//    ushg_u.SetSize(dof_u);
+//    dupdu.SetSize(dof_u);
+//    sh_p.SetSize(dof_p);
+//    shg_p.SetSize(dof_p, dim);
+//    // Same
+
+
+//    // Introduce Transpose of shg_u
+//    DenseMatrix shg_uT(dim, dof_u);
+//    // Introduce Transpose of shg_u
+
+
+//    // Same
+//    int intorder = 2*el[0]->GetOrder()-2;
+//    const IntegrationRule &ir = IntRules.Get(el[0]->GetGeomType(), intorder);
+//    real_t tau_m, tau_c, cfl2;
+//    // Same
+
+//    for (int i = 0; i < ir.GetNPoints(); ++i)
+//    {
+//       // Same
+//       const IntegrationPoint &ip = ir.IntPoint(i);
+//       Tr.SetIntPoint(&ip);
+//       real_t w = ip.weight * Tr.Weight();
+
+//       real_t mu = c_mu.Eval(Tr, ip);
+
+//       el[0]->CalcPhysShape(Tr, sh_u);
+//       elf_u.MultTranspose(sh_u, u);
+//       elf_du.MultTranspose(sh_u, dudt);
+
+//       el[0]->CalcPhysDShape(Tr, shg_u);
+//       MultAtB(elf_u, shg_u, grad_u);
+
+//       shg_u.Mult(u, ushg_u);
+
+//       el[1]->CalcPhysShape(Tr, sh_p);
+//       real_t p = sh_p*(*elsol[1]);
+
+//       el[1]->CalcPhysDShape(Tr, shg_p);
+//       shg_p.MultTranspose(*elsol[1], grad_p);
+
+//       // Compute strong residual
+//       MultAtB(elf_u, shg_u, grad_u);
+//       grad_u.Mult(u,res_m);   // Add convection
+//       res_m += dudt;          // Add acceleration
+//       res_m += grad_p;        // Add pressure
+//       res_m -= f;             // Subtract force
+
+//       if (hess)               // Add diffusion
+//       {
+//          el[0]->CalcPhysHessian(Tr,shh_u);
+//          MultAtB(elf_u, shh_u, hess_u);
+//          for (int i = 0; i < dim; ++i)
+//          {
+//             for (int j = 0; j < dim; ++j)
+//             {
+//                res_m[j] -= mu*(hess_u(j,hmap(i,i)) + hess_u(i,hmap(j,i)));
+//             }
+//          }
+//       }
+//       else                   // No diffusion in strong residual
+//       {
+//          shh_u = 0.0;
+//          hess_u = 0.0;
+//       }
+
+//       // Compute stability params
+//       GetTau(tau_m, tau_c, cfl2, mu, u, Tr);
+
+//       // Small scale reconstruction
+//       up.Set(-tau_m,res_m);
+//       u += up;
+
+//       // Compute small scale jacobian
+//       for (int j_u = 0; j_u < dof_u; ++j_u)
+//       {
+//          dupdu(j_u) = -tau_m*(sh_u(j_u) + ushg_u(j_u)*dt);
+//       }
+
+//       // Recompute convective gradient
+//       MultAtB(elf_u, shg_u, grad_u);
+
+//       shg_uT.Transpose(shg_u);
+//       // Same
+
+
+//       // Momentum - Velocity block (w,u)
+//       for (int j_u = 0; j_u < dof_u; ++j_u)
+//       {
+//          real_t tmp1 = sh_u(j_u);
+//          real_t tmp2 = dupdu(j_u);
+//          for (int i_u = 0; i_u < dof_u; ++i_u)
+//          {
+
+//             // Diffusion
+//             real_t mat = 0.0;
+//             for (int dim_u = 0; dim_u < dim; ++dim_u)
+//             {
+//                //  mat += shg_u(i_u,dim_u)*shg_u(j_u,dim_u);
+//                mat += shg_uT(dim_u, i_u)*shg_uT(dim_u, j_u);
+//             }
+//             mat *= mu*dt;
+
+//             // Acceleration
+//             mat += sh_u(i_u)*tmp1;
+
+//             // Convection -- frozen convection
+//             mat -= ushg_u(i_u)*(tmp1*dt+tmp2);   // tmp1 = Galerkin tmp2 = SUPG
+
+//             mat_wu1(i_u, j_u) += mat*w;
+//          }
+//       }
+
+//       for (int j_dim = 0; j_dim < dim; ++j_dim)
+//       {
+//          for (int j_u = 0; j_u < dof_u; ++j_u)
+//          {
+//             int j_dof = j_u + j_dim*dof_u;
+//             real_t tmp1 = shg_u(j_u,j_dim)*w*dt;
+
+//             for (int i_dim = 0; i_dim < dim; ++i_dim)
+//             {
+//                real_t tmp2 = shg_uT(i_dim,j_u)*w*dt;
+//                for (int i_u = 0; i_u < dof_u; ++i_u)
+//                {
+//                   mat_wu(i_u + i_dim*dof_u, j_dof)
+//                   += mu*shg_u(i_u,j_dim)*tmp2 + tau_c*shg_u(i_u,i_dim)*tmp1;
+//                }
+//             }
+//          }
+//       }
+
+//       // Momentum - Pressure block (w,p)
+//       for (int i_p = 0; i_p < dof_p; ++i_p)
+//       {
+//          real_t tmp1 = sh_p(i_p)*w*dt;
+//          for (int dim_u = 0; dim_u < dim; ++dim_u)
+//          {
+//             real_t tmp2 = shg_p(i_p,dim_u)*tau_m*w*dt;
+//             for (int j_u = 0; j_u < dof_u; ++j_u)
+//             {
+//                mat_wp(j_u + dof_u * dim_u, i_p)
+//                += (tmp2*ushg_u(j_u) - shg_u(j_u,dim_u)*tmp1);
+//             }
+//          }
+//       }
+
+//       // Continuity - Velocity block (q,u)
+//       for (int dim_u = 0; dim_u < dim; ++dim_u)
+//       {
+//          for (int j_u = 0; j_u < dof_u; ++j_u)
+//          {
+//             int j_dof = j_u + dof_u * dim_u;
+//             real_t tmp1 = shg_u(j_u,dim_u)*w;
+//             real_t tmp2 = dupdu(j_u)*w;
+//             for (int i_p = 0; i_p < dof_p; ++i_p)
+//             {
+//                mat_qu(i_p, j_dof)
+//                += (-sh_p(i_p)*tmp1*dt + shg_p(i_p, dim_u)*tmp2);
+//             }
+//          }
+//       }
+
+//       // Continuity - Pressure block (w,p)
+//       AddMult_a_AAt(-w*tau_m*dt, shg_p, mat_qp);
+
+//       // bool TimeMeasurement = false;
+
+//       // if (TimeMeasurement){
+//       //    ForloopIntroductionCounter++;
+//       //    ForloopIntroductionTime = std::chrono::duration_cast<std::chrono::microseconds>(TimeEnd2 - TimeStart2).count();
+//       //    ForloopIntroductionTimeSum += ForloopIntroductionTime;
+
+//       //    MomentumVelocityBlockTime = std::chrono::duration_cast<std::chrono::microseconds>(TimeEnd3 - TimeStart3).count();
+//       //    MomentumVelocityBlockTimeSum += MomentumVelocityBlockTime;
+
+//       //    MomentumPressureBlockTime = std::chrono::duration_cast<std::chrono::microseconds>(TimeEnd4 - TimeStart4).count();
+//       //    MomentumPressureBlockTimeSum += MomentumPressureBlockTime;
+
+//       //    ContinuityVelocityBlockTime = std::chrono::duration_cast<std::chrono::microseconds>(TimeEnd5 - TimeStart5).count();
+//       //    ContinuityVelocityBlockTimeSum += ContinuityVelocityBlockTime;
+
+//       //    ContinuityPressureBlockTime = std::chrono::duration_cast<std::chrono::microseconds>(TimeEnd6 - TimeStart6).count();
+//       //    ContinuityPressureBlockTimeSum += ContinuityPressureBlockTime;
+//       //    ContinuityPressureBlockCounter++;
+//       // }
+//    }
+
+//    for (int dim_u = 0; dim_u < dim; ++dim_u)
+//    {
+//       for (int j_u = 0; j_u < dof_u; ++j_u)
+//       {
+//          for (int i_u = 0; i_u < dof_u; ++i_u)
+//          {
+//             mat_wu(i_u + dim_u*dof_u, j_u + dim_u*dof_u) += mat_wu1(i_u, j_u);
+//          }
+//       }
+//    }
+
+//    bool printMeasurements = true;
+//    if (printMeasurements){
+//       double IntroductionTime = 0;
+//       // auto IntroductionTime = std::chrono::duration_cast<std::chrono::microseconds>(TimeEnd1 - TimeStart1).count();
+//       auto TotalTimeEnd = std::chrono::high_resolution_clock::now();
+//       auto TotalTime = std::chrono::duration_cast<std::chrono::microseconds>(TotalTimeEnd - TimeStart1).count();
+
+//       // std::cout << "ir.GetNPoints() = " << ir.GetNPoints() << ", dim = " << dim << ", dof_u = " << dof_u << ", dof_p = " << dof_p << std::endl;
+//       // std::cout << "---------------------- AEG  Profile -------------------" << std::endl;
+//       // std::cout << "Introduction Elapsed time: " << IntroductionTime << " microseconds (1 call)" << std::endl;
+//       // std::cout << "For-loop Introduction Elapsed time: " << ForloopIntroductionTimeSum << " microseconds (" << ForloopIntroductionCounter << "calls) (Mean time per call: " << ForloopIntroductionTimeSum / ForloopIntroductionCounter << std::endl;
+//       // std::cout << "Momentum Velocity Block Elapsed time: " << MomentumVelocityBlockTimeSum << " microseconds (" << MomentumVelocityBlockCounter1 << " & " << MomentumVelocityBlockCounter2 << "calls) (Mean time per call: " << MomentumVelocityBlockTimeSum / MomentumVelocityBlockCounter1 << std::endl;   
+//       // std::cout << "Momentum Pressure Block Elapsed time: " << MomentumPressureBlockTimeSum << " microseconds (" << MomentumPressureBlockCounter << "calls) (Mean time per call: " << MomentumPressureBlockTimeSum / MomentumPressureBlockCounter << std::endl;
+//       // std::cout << "Continuity Velocity Elapsed time: " << ContinuityVelocityBlockTimeSum << " microseconds (" << ContinuityVelocityBlockCounter << "calls) (Mean time per call: " << ContinuityVelocityBlockTimeSum / ContinuityVelocityBlockCounter << std::endl;
+//       // std::cout << "Continuity Pressure Elapsed time: " << ContinuityPressureBlockTimeSum << " microseconds (" << ContinuityPressureBlockCounter << "calls) (Mean time per call: " << ContinuityPressureBlockTimeSum / ContinuityPressureBlockCounter << std::endl;
+//       // std::cout << "Total AEG Elapsed time: " << TotalTime << " microseconds" << std::endl;
+//       // std::cout << "Sum of Elapsed time: " << IntroductionTime + ForloopIntroductionTimeSum + MomentumVelocityBlockTimeSum + MomentumPressureBlockTimeSum + ContinuityVelocityBlockTimeSum + ContinuityPressureBlockTimeSum<< " microseconds" << std::endl;
+//       // std::cout << "--------------------- Next AEG call ---------------------\n" << std::endl;
+
+//       std::cout << IntroductionTime << "\t" << ForloopIntroductionTimeSum << "\t" << MomentumVelocityBlockTimeSum << "\t" << MomentumPressureBlockTimeSum << "\t" << ContinuityVelocityBlockTimeSum << "\t" << ContinuityPressureBlockTimeSum << "\t" << TotalTime << std::endl;
+//    }
+// }
+
+
+
+
+
 
 void IncNavStoIntegrator::AssembleElementGrad(
    const Array<const FiniteElement*> &el,
@@ -571,31 +864,9 @@ void IncNavStoIntegrator::AssembleElementGrad(
    const Array<const Vector *> &elrate,
    const Array2D<DenseMatrix *> &elmats)
 {
-   double ForloopIntroductionTime = 0;
-   double MomentumVelocityBlockTime = 0;
-   double MomentumPressureBlockTime = 0;
-   double ContinuityVelocityBlockTime = 0;
-   double ContinuityPressureBlockTime = 0;
-
-   double ForloopIntroductionTimeSum = 0;
-   double MomentumVelocityBlockTimeSum = 0;
-   double MomentumPressureBlockTimeSum = 0;
-   double ContinuityVelocityBlockTimeSum = 0;
-   double ContinuityPressureBlockTimeSum = 0;
-   double MomentumVelocityBlockCounter1 = 0;
-   double MomentumVelocityBlockCounter2 = 0;
-   double MomentumVelocityBlockCounter3 = 0;
-
-   int ForloopIntroductionCounter = 0;
-   int MomentumVelocityBlockCounter = 0;
-   int MomentumPressureBlockCounter = 0;
-   int ContinuityVelocityBlockCounter = 0;
-   int ContinuityPressureBlockCounter = 0;
-   
    // Start Measuring Time
    auto TimeStart1 = std::chrono::high_resolution_clock::now();
-
-   // Same
+   
    int dof_u = el[0]->GetDof();
    int dof_p = el[1]->GetDof();
 
@@ -603,59 +874,47 @@ void IncNavStoIntegrator::AssembleElementGrad(
 
    elf_u.UseExternalData(elsol[0]->GetData(), dof_u, dim);
    elf_du.UseExternalData(elrate[0]->GetData(), dof_u, dim);
-   // Same
 
+   elmats(0,0)->SetSize(dof_u*dim, dof_u*dim);
+   elmats(0,1)->SetSize(dof_u*dim, dof_p);
+   elmats(1,0)->SetSize(dof_p, dof_u*dim);
+   elmats(1,1)->SetSize(dof_p, dof_p);
 
-   // New way of dereferencing elmats
-   DenseMatrix &mat_wu = *elmats(0,0);
-   DenseMatrix &mat_wp = *elmats(0,1);
-   DenseMatrix &mat_qu = *elmats(1,0);
-   DenseMatrix &mat_qp = *elmats(1,1);
+   *elmats(0,0) = 0.0;
+   *elmats(0,1) = 0.0;
+   *elmats(1,0) = 0.0;
+   *elmats(1,1) = 0.0;
 
-   DenseMatrix mat_wu1(dof_u, dof_u);
-
-   mat_wu.SetSize(dof_u*dim, dof_u*dim);
-   mat_wp.SetSize(dof_u*dim, dof_p);
-   mat_qu.SetSize(dof_p, dof_u*dim);
-   mat_qp.SetSize(dof_p, dof_p);
-
-   mat_wu1 = 0.0;
-   mat_wu = 0.0;
-   mat_wp = 0.0;
-   mat_qu = 0.0;
-   mat_qp = 0.0;
-   // New way of dereferencing elmats
-
-
-   // Same
    sh_u.SetSize(dof_u);
    shg_u.SetSize(dof_u, dim);
    ushg_u.SetSize(dof_u);
    dupdu.SetSize(dof_u);
    sh_p.SetSize(dof_p);
    shg_p.SetSize(dof_p, dim);
-   // Same
 
+   //R - initialize matrices and vectors with correct size
+   DenseMatrix mat_matrix, mu_mat, tau_mat, wp_mat, qu_mat;
+   Vector shg_u_1_vec, shg_u_2_vec, shg_p_vec;
 
-   // Introduce Transpose of shg_u
-   DenseMatrix shg_uT(dim, dof_u);
-   // Introduce Transpose of shg_u
+   mat_matrix.SetSize(dof_u,dof_u);
+   mu_mat.SetSize(dof_u,dof_u);
+   tau_mat.SetSize(dof_u,dof_u);
+   wp_mat.SetSize(dof_u,dof_u);
+   qu_mat.SetSize(dof_u,dof_u);
 
-
-   // Same
-   int intorder = 2*el[0]->GetOrder()-2;
+   int intorder = 2*el[0]->GetOrder();
    const IntegrationRule &ir = IntRules.Get(el[0]->GetGeomType(), intorder);
    real_t tau_m, tau_c, cfl2;
-   // Same
-
    for (int i = 0; i < ir.GetNPoints(); ++i)
    {
-      // Same
       const IntegrationPoint &ip = ir.IntPoint(i);
       Tr.SetIntPoint(&ip);
       real_t w = ip.weight * Tr.Weight();
-
       real_t mu = c_mu.Eval(Tr, ip);
+
+      //R - cache const variables re-used in inner loops
+      const real_t w_dt = w*dt;
+      const real_t mu_dt = mu*dt;
 
       el[0]->CalcPhysShape(Tr, sh_u);
       elf_u.MultTranspose(sh_u, u);
@@ -687,7 +946,8 @@ void IncNavStoIntegrator::AssembleElementGrad(
          {
             for (int j = 0; j < dim; ++j)
             {
-               res_m[j] -= mu*(hess_u(j,hmap(i,i)) + hess_u(i,hmap(j,i)));
+               res_m[j] -= mu*(hess_u(j,hmap(i,i)) +
+                               hess_u(i,hmap(j,i)));
             }
          }
       }
@@ -713,122 +973,86 @@ void IncNavStoIntegrator::AssembleElementGrad(
       // Recompute convective gradient
       MultAtB(elf_u, shg_u, grad_u);
 
-      shg_uT.Transpose(shg_u);
-      // Same
+      ///////////////////
+      // Vectorization //
+      ///////////////////
+      
+      // R -   Reset matrix. Sets all values of mat_matrix to 0. 
+      mat_matrix = 0.0; 
 
+      // Diffusion term. mat_matrix = shg_u * shg_u^T
+      MultAAt(shg_u, mat_matrix);
+      mat_matrix *= mu_dt;
 
+      // Acceleration term. mat_matrix += sh_u * sh_u^T
+      AddMultVVt(sh_u, mat_matrix);
+      
+      // Convection terms   /// VWt += a * v w^t void AddMult_a_VWt(const real_t a, const Vector &v, const Vector &w, DenseMatrix &VWt);
+      AddMult_a_VWt(-dt, ushg_u, sh_u, mat_matrix);
+      const real_t tempy =  -1.0;   //Temporary constant to simulate -= when using AddMult_a_VWt()
+      AddMult_a_VWt(tempy, ushg_u, dupdu, mat_matrix);
+      mat_matrix *= w;
+
+      // Adds blocks of (dof_u, dof_u) to diagonals for every dimension. The matrix is the same for all dimensions.
+      for (int dim_u = 0; dim_u < dim; ++dim_u)
+      {
+         elmats(0,0)->AddSubMatrix(dim_u * dof_u, mat_matrix);
+      }
+      
       // Momentum - Velocity block (w,u)
-      for (int j_u = 0; j_u < dof_u; ++j_u)
-      {
-         real_t tmp1 = sh_u(j_u);
-         real_t tmp2 = dupdu(j_u);
-         for (int i_u = 0; i_u < dof_u; ++i_u)
+      for (int i_dim = 0; i_dim < dim; ++i_dim)
          {
-
-            // Diffusion
-            real_t mat = 0.0;
-            for (int dim_u = 0; dim_u < dim; ++dim_u)
+            // Getting columns for outer product
+            shg_u.GetColumn(i_dim, shg_u_2_vec);
+            for (int j_dim = 0; j_dim < dim; ++j_dim)
             {
-               //  mat += shg_u(i_u,dim_u)*shg_u(j_u,dim_u);
-               mat += shg_uT(dim_u, i_u)*shg_uT(dim_u, j_u);
-            }
-            mat *= mu*dt;
+               shg_u.GetColumn(j_dim, shg_u_1_vec);
 
-            // Acceleration
-            mat += sh_u(i_u)*tmp1;
-
-            // Convection -- frozen convection
-            mat -= ushg_u(i_u)*(tmp1*dt+tmp2);   // tmp1 = Galerkin tmp2 = SUPG
-
-            mat_wu1(i_u, j_u) += mat*w;
-         }
-      }
-
-      for (int j_dim = 0; j_dim < dim; ++j_dim)
-      {
-         for (int j_u = 0; j_u < dof_u; ++j_u)
-         {
-            int j_dof = j_u + j_dim*dof_u;
-            real_t tmp1 = shg_u(j_u,j_dim)*w*dt;
-
-            for (int i_dim = 0; i_dim < dim; ++i_dim)
-            {
-               real_t tmp2 = shg_uT(i_dim,j_u)*w*dt;
-               for (int i_u = 0; i_u < dof_u; ++i_u)
-               {
-                  mat_wu(i_u + i_dim*dof_u, j_dof)
-                  += mu*shg_u(i_u,j_dim)*tmp2 + tau_c*shg_u(i_u,i_dim)*tmp1;
-               }
+               mu_mat = 0.0;
+               // R -   Outer product times scalar, store in mu_mat
+               AddMult_a_VWt(w_dt*mu, shg_u_2_vec, shg_u_1_vec, mu_mat);
+               // R -   Add mu_mat as a block to elmats
+               elmats(0,0)->AddSubMatrix(i_dim * dof_u, j_dim * dof_u, mu_mat);
+               
+               tau_mat = 0.0;
+               // R -   Outer product times scalar, store in tau_mat
+               AddMult_a_VWt(w_dt*tau_c,  shg_u_2_vec, shg_u_1_vec, tau_mat);
+               // R -   Add tau_mat as a block to elmats
+               elmats(0,0)->AddSubMatrix(i_dim * dof_u, j_dim * dof_u, tau_mat);
             }
          }
-      }
 
       // Momentum - Pressure block (w,p)
-      for (int i_p = 0; i_p < dof_p; ++i_p)
+      for (int dim_u = 0; dim_u < dim; ++dim_u)
       {
-         real_t tmp1 = sh_p(i_p)*w*dt;
-         for (int dim_u = 0; dim_u < dim; ++dim_u)
-         {
-            real_t tmp2 = shg_p(i_p,dim_u)*tau_m*w*dt;
-            for (int j_u = 0; j_u < dof_u; ++j_u)
-            {
-               mat_wp(j_u + dof_u * dim_u, i_p)
-               += (tmp2*ushg_u(j_u) - shg_u(j_u,dim_u)*tmp1);
-            }
-         }
+         wp_mat = 0.0;
+
+         // Getting columns for outer product
+         shg_p.GetColumn(dim_u, shg_p_vec);
+         shg_u.GetColumn(dim_u, shg_u_1_vec);
+
+         // R -   Outer product times scalar, store in wp_mat
+         AddMult_a_VWt(tau_m * w_dt, ushg_u, shg_p_vec, wp_mat);
+         AddMult_a_VWt(-w_dt, shg_u_1_vec, sh_p, wp_mat);
+
+         // R -   Add wp_mat as a block to elmats
+         elmats(0,1)->AddSubMatrix(dim_u * dof_u, 0, wp_mat);
       }
 
       // Continuity - Velocity block (q,u)
       for (int dim_u = 0; dim_u < dim; ++dim_u)
       {
-         for (int j_u = 0; j_u < dof_u; ++j_u)
-         {
-            int j_dof = j_u + dof_u * dim_u;
-            real_t tmp1 = shg_u(j_u,dim_u)*w;
-            real_t tmp2 = dupdu(j_u)*w;
-            for (int i_p = 0; i_p < dof_p; ++i_p)
-            {
-               mat_qu(i_p, j_dof)
-               += (-sh_p(i_p)*tmp1*dt + shg_p(i_p, dim_u)*tmp2);
-            }
-         }
-      }
+         qu_mat = 0.0;
+         shg_p.GetColumn(dim_u, shg_p_vec);
+         shg_u.GetColumn(dim_u, shg_u_1_vec);
 
+         AddMult_a_VWt(-w_dt, sh_p, shg_u_1_vec, qu_mat);
+         AddMult_a_VWt(w, shg_p_vec, dupdu, qu_mat);
+
+         elmats(1,0)->AddSubMatrix(0, dim_u * dof_u, qu_mat);
+      }
       // Continuity - Pressure block (w,p)
-      AddMult_a_AAt(-w*tau_m*dt, shg_p, mat_qp);
-
-      // bool TimeMeasurement = false;
-
-      // if (TimeMeasurement){
-      //    ForloopIntroductionCounter++;
-      //    ForloopIntroductionTime = std::chrono::duration_cast<std::chrono::microseconds>(TimeEnd2 - TimeStart2).count();
-      //    ForloopIntroductionTimeSum += ForloopIntroductionTime;
-
-      //    MomentumVelocityBlockTime = std::chrono::duration_cast<std::chrono::microseconds>(TimeEnd3 - TimeStart3).count();
-      //    MomentumVelocityBlockTimeSum += MomentumVelocityBlockTime;
-
-      //    MomentumPressureBlockTime = std::chrono::duration_cast<std::chrono::microseconds>(TimeEnd4 - TimeStart4).count();
-      //    MomentumPressureBlockTimeSum += MomentumPressureBlockTime;
-
-      //    ContinuityVelocityBlockTime = std::chrono::duration_cast<std::chrono::microseconds>(TimeEnd5 - TimeStart5).count();
-      //    ContinuityVelocityBlockTimeSum += ContinuityVelocityBlockTime;
-
-      //    ContinuityPressureBlockTime = std::chrono::duration_cast<std::chrono::microseconds>(TimeEnd6 - TimeStart6).count();
-      //    ContinuityPressureBlockTimeSum += ContinuityPressureBlockTime;
-      //    ContinuityPressureBlockCounter++;
-      // }
-   }
-
-   for (int dim_u = 0; dim_u < dim; ++dim_u)
-   {
-      for (int j_u = 0; j_u < dof_u; ++j_u)
-      {
-         for (int i_u = 0; i_u < dof_u; ++i_u)
-         {
-            mat_wu(i_u + dim_u*dof_u, j_u + dim_u*dof_u) += mat_wu1(i_u, j_u);
-         }
-      }
-   }
+      AddMult_a_AAt(-w_dt*tau_m, shg_p, *elmats(1,1));
 
    bool printMeasurements = true;
    if (printMeasurements){
@@ -850,16 +1074,9 @@ void IncNavStoIntegrator::AssembleElementGrad(
       // std::cout << "--------------------- Next AEG call ---------------------\n" << std::endl;
 
       std::cout << IntroductionTime << "\t" << ForloopIntroductionTimeSum << "\t" << MomentumVelocityBlockTimeSum << "\t" << MomentumPressureBlockTimeSum << "\t" << ContinuityVelocityBlockTimeSum << "\t" << ContinuityPressureBlockTimeSum << "\t" << TotalTime << std::endl;
-   }
+      }
+   }   
 }
-
-
-
-
-
-
-
-
 
 
 
