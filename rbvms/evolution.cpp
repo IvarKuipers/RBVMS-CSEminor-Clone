@@ -333,6 +333,7 @@ BlockOperator & ParTimeDepBlockNonlinForm::GetGradient(const Vector &x) const
 
    if (pBlockGrad == NULL)
    {
+
       pBlockGrad = new BlockOperator(block_trueOffsets);
    }
 
@@ -347,7 +348,7 @@ BlockOperator & ParTimeDepBlockNonlinForm::GetGradient(const Vector &x) const
          phBlockGrad(s1,s2)->Clear();
       }
    }
-
+   std::cout << "Remaking the Jacobian" << std::endl;
    GetLocalGradient(x); // gradients are stored in 'Grads'
 
    if (fnfi.Size() > 0)
