@@ -1054,7 +1054,16 @@ void IncNavStoIntegrator::AssembleElementGrad(
                AddMult_a_VWt(w_dt*mu, shg_u_2_vec, shg_u_1_vec, mu_mat);
                // R -   Add mu_mat as a block to elmats
                elmats(0,0)->AddSubMatrix(i_dim * dof_u, j_dim * dof_u, mu_mat);
+            }
+         }
                
+      for (int i_dim = 0; i_dim < dim; ++i_dim)
+         {
+            // Getting columns for outer product
+            shg_u.GetColumn(i_dim, shg_u_2_vec);
+            for (int j_dim = 0; j_dim < dim; ++j_dim)
+            {
+               shg_u.GetColumn(j_dim, shg_u_1_vec);
                tau_mat = 0.0;
                // R -   Outer product times scalar, store in tau_mat
                AddMult_a_VWt(w_dt*tau_c,  shg_u_2_vec, shg_u_1_vec, tau_mat);
