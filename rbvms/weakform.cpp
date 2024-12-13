@@ -797,26 +797,26 @@ void IncNavStoIntegrator::AssembleElementGrad(
       // Continuity - Pressure block (w,p)
       AddMult_a_AAt(-w*tau_m*dt, shg_p, mat_qp);
 
-      bool TimeMeasurement = false;
+      // bool TimeMeasurement = false;
 
-      if (TimeMeasurement){
-         ForloopIntroductionCounter++;
-         ForloopIntroductionTime = std::chrono::duration_cast<std::chrono::microseconds>(TimeEnd2 - TimeStart2).count();
-         ForloopIntroductionTimeSum += ForloopIntroductionTime;
+      // if (TimeMeasurement){
+      //    ForloopIntroductionCounter++;
+      //    ForloopIntroductionTime = std::chrono::duration_cast<std::chrono::microseconds>(TimeEnd2 - TimeStart2).count();
+      //    ForloopIntroductionTimeSum += ForloopIntroductionTime;
 
-         MomentumVelocityBlockTime = std::chrono::duration_cast<std::chrono::microseconds>(TimeEnd3 - TimeStart3).count();
-         MomentumVelocityBlockTimeSum += MomentumVelocityBlockTime;
+      //    MomentumVelocityBlockTime = std::chrono::duration_cast<std::chrono::microseconds>(TimeEnd3 - TimeStart3).count();
+      //    MomentumVelocityBlockTimeSum += MomentumVelocityBlockTime;
 
-         MomentumPressureBlockTime = std::chrono::duration_cast<std::chrono::microseconds>(TimeEnd4 - TimeStart4).count();
-         MomentumPressureBlockTimeSum += MomentumPressureBlockTime;
+      //    MomentumPressureBlockTime = std::chrono::duration_cast<std::chrono::microseconds>(TimeEnd4 - TimeStart4).count();
+      //    MomentumPressureBlockTimeSum += MomentumPressureBlockTime;
 
-         ContinuityVelocityBlockTime = std::chrono::duration_cast<std::chrono::microseconds>(TimeEnd5 - TimeStart5).count();
-         ContinuityVelocityBlockTimeSum += ContinuityVelocityBlockTime;
+      //    ContinuityVelocityBlockTime = std::chrono::duration_cast<std::chrono::microseconds>(TimeEnd5 - TimeStart5).count();
+      //    ContinuityVelocityBlockTimeSum += ContinuityVelocityBlockTime;
 
-         ContinuityPressureBlockTime = std::chrono::duration_cast<std::chrono::microseconds>(TimeEnd6 - TimeStart6).count();
-         ContinuityPressureBlockTimeSum += ContinuityPressureBlockTime;
-         ContinuityPressureBlockCounter++;
-      }
+      //    ContinuityPressureBlockTime = std::chrono::duration_cast<std::chrono::microseconds>(TimeEnd6 - TimeStart6).count();
+      //    ContinuityPressureBlockTimeSum += ContinuityPressureBlockTime;
+      //    ContinuityPressureBlockCounter++;
+      // }
    }
 
    for (int dim_u = 0; dim_u < dim; ++dim_u)
