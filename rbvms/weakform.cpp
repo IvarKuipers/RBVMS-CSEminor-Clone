@@ -864,9 +864,30 @@ void IncNavStoIntegrator::AssembleElementGrad(
    const Array<const Vector *> &elrate,
    const Array2D<DenseMatrix *> &elmats)
 {
+   double ForloopIntroductionTime = 0;
+   double MomentumVelocityBlockTime = 0;
+   double MomentumPressureBlockTime = 0;
+   double ContinuityVelocityBlockTime = 0;
+   double ContinuityPressureBlockTime = 0;
+
+   double ForloopIntroductionTimeSum = 0;
+   double MomentumVelocityBlockTimeSum = 0;
+   double MomentumPressureBlockTimeSum = 0;
+   double ContinuityVelocityBlockTimeSum = 0;
+   double ContinuityPressureBlockTimeSum = 0;
+   double MomentumVelocityBlockCounter1 = 0;
+   double MomentumVelocityBlockCounter2 = 0;
+   double MomentumVelocityBlockCounter3 = 0;
+
+   int ForloopIntroductionCounter = 0;
+   int MomentumVelocityBlockCounter = 0;
+   int MomentumPressureBlockCounter = 0;
+   int ContinuityVelocityBlockCounter = 0;
+   int ContinuityPressureBlockCounter = 0;
+   
    // Start Measuring Time
    auto TimeStart1 = std::chrono::high_resolution_clock::now();
-   
+
    int dof_u = el[0]->GetDof();
    int dof_p = el[1]->GetDof();
 
