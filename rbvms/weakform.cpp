@@ -906,6 +906,26 @@ void IncNavStoIntegrator::AssembleElementGrad(
    *elmats(1,0) = 0.0;
    *elmats(1,1) = 0.0;
 
+   // // New way of dereferencing elmats
+   // DenseMatrix &mat_wu = *elmats(0,0);
+   // DenseMatrix &mat_wp = *elmats(0,1);
+   // DenseMatrix &mat_qu = *elmats(1,0);
+   // DenseMatrix &mat_qp = *elmats(1,1);
+
+   // DenseMatrix mat_wu1(dof_u, dof_u);
+
+   // mat_wu.SetSize(dof_u*dim, dof_u*dim);
+   // mat_wp.SetSize(dof_u*dim, dof_p);
+   // mat_qu.SetSize(dof_p, dof_u*dim);
+   // mat_qp.SetSize(dof_p, dof_p);
+
+   // mat_wu1 = 0.0;
+   // mat_wu = 0.0;
+   // mat_wp = 0.0;
+   // mat_qu = 0.0;
+   // mat_qp = 0.0;
+   // // New way of dereferencing elmats
+
    sh_u.SetSize(dof_u);
    shg_u.SetSize(dof_u, dim);
    ushg_u.SetSize(dof_u);
@@ -1034,7 +1054,16 @@ void IncNavStoIntegrator::AssembleElementGrad(
                AddMult_a_VWt(w_dt*mu, shg_u_2_vec, shg_u_1_vec, mu_mat);
                // R -   Add mu_mat as a block to elmats
                elmats(0,0)->AddSubMatrix(i_dim * dof_u, j_dim * dof_u, mu_mat);
+            }
+         }
                
+      for (int i_dim = 0; i_dim < dim; ++i_dim)
+         {
+            // Getting columns for outer product
+            shg_u.GetColumn(i_dim, shg_u_2_vec);
+            for (int j_dim = 0; j_dim < dim; ++j_dim)
+            {
+               shg_u.GetColumn(j_dim, shg_u_1_vec);
                tau_mat = 0.0;
                // R -   Outer product times scalar, store in tau_mat
                AddMult_a_VWt(w_dt*tau_c,  shg_u_2_vec, shg_u_1_vec, tau_mat);
