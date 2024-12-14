@@ -1101,7 +1101,7 @@ void IncNavStoIntegrator::AssembleElementGrad(
       // AddMult_a_AAt(-w_dt*tau_m, shg_p, *elmats(1,1));
       AddMult_a_AAt(-w_dt*tau_m, shg_p, mat_qp);
 
-   bool printMeasurements = true;
+   bool printMeasurements = false;
    if (printMeasurements){
       double IntroductionTime = 0;
       // auto IntroductionTime = std::chrono::duration_cast<std::chrono::microseconds>(TimeEnd1 - TimeStart1).count();
