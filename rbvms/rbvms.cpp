@@ -29,6 +29,9 @@ using namespace mfem;
 extern void printInfo();
 extern void line(int len);
 
+double SumTime = 0;
+int TimeCounter = 0; 
+
 int main(int argc, char *argv[])
 {
    // 1. Initialize MPI and HYPRE and print info
