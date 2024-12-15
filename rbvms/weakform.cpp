@@ -1042,13 +1042,17 @@ void IncNavStoIntegrator::AssembleElementGrad(
       }
       
       // Momentum - Velocity block (w,u)
-      for (int i_dim = 0; i_dim < dim; ++i_dim)
+      // for (int i_dim = 0; i_dim < dim; ++i_dim)
+      for (int j_dim = 0; j_dim < dim; ++j_dim)
          {
             // Getting columns for outer product
-            shg_u.GetColumn(i_dim, shg_u_2_vec);
-            for (int j_dim = 0; j_dim < dim; ++j_dim)
+            // shg_u.GetColumn(i_dim, shg_u_2_vec);
+            shg_u.GetColumn(j_dim, shg_u_1_vec);
+            // for (int j_dim = 0; j_dim < dim; ++j_dim)
+            for (int i_dim = 0; i_dim < dim; ++i_dim)
             {
-               shg_u.GetColumn(j_dim, shg_u_1_vec);
+               // shg_u.GetColumn(j_dim, shg_u_1_vec);
+               shg_u.GetColumn(i_dim, shg_u_2_vec);
 
                mu_mat = 0.0;
                // R -   Outer product times scalar, store in mu_mat
