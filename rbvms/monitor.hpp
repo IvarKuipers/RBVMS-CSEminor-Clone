@@ -52,7 +52,8 @@ public:
    SystemResidualMonitor(MPI_Comm comm,
                          const std::string& prefix_,
                          int print_lvl,
-                         Array<int> &offsets);
+                         Array<int> &offsets,
+                         bool& reset);
 
    /// Calculate residual
    virtual void ComputeResiduals(const Vector &r, Vector &vnorm);
@@ -62,7 +63,8 @@ public:
    virtual void MonitorResidual(int it,
                                 real_t norm,
                                 const Vector &r,
-                                bool final);
+                                bool final,
+                                bool& reset);
 };
 
 } // namespace RBVMS
