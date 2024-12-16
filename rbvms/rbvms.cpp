@@ -217,7 +217,7 @@ int main(int argc, char *argv[])
    bOffsets[2] = spaces[1]->TrueVSize();
    bOffsets.PartialSum();
    //Define residual vector size
-   bool Resetter = true;
+   int nvar = bOffsets.Size()-1;
 
    // 5. Define the time stepping algorithm
 
@@ -238,17 +238,17 @@ int main(int argc, char *argv[])
    // Set up the Newton solver
    RBVMS::SystemResidualMonitor newton_monitor(MPI_COMM_WORLD,
                                                "Newton", 1,
-                                               bOffsets,
-                                               Resetter);
+                                               bOffsets);
    NewtonSolver newton_solver(MPI_COMM_WORLD);
    newton_solver.iterative_mode = true;
    newton_solver.SetPrintLevel(-1);
    newton_solver.SetMonitor(newton_monitor);
    newton_solver.SetRelTol(Newton_RelTol);
    newton_solver.SetAbsTol(1e-12);
-   newton_solver.SetMaxIter(Newton_MaxIter);
+   newton_solver.SetMaxIter(Newton_MaxIter );
    newton_solver.SetSolver(j_gmres);
-   
+
+   Vector SystemResiduals(nvar);
     
    // Define the physical parameters
    LibVectorCoefficient sol(dim, lib_file, "sol_u");
@@ -259,7 +259,6 @@ int main(int argc, char *argv[])
    RBVMS::IncNavStoIntegrator integrator(mu, force, sol);
    RBVMS::ParTimeDepBlockNonlinForm form(spaces, integrator);
    RBVMS::Evolution evo(form, newton_solver);
-   //maybe include Implicitsolve object so the jacobian can be reset outside evolution
    ode_solver->Init(evo);
 
    // Boundary conditions
@@ -451,24 +450,33 @@ int main(int argc, char *argv[])
 
       // Actual time step
       xp0 = xp;
-      auto newton_start = std::chrono::high_resolution_clock::now();
-      ode_solver->Step(xp, t, dt);
+      bool succes = false;
+      int retries = 0;
+      while(!succes && retries <= maxRetries)
+      {
+         auto newton_start = std::chrono::high_resolution_clock::now();
 
-      //PreconCounter++;
+         ode_solver->Step(xp, t, dt);
+
+         
+         auto newton_end = std::chrono::high_resolution_clock::now();
+         auto newton_duration = std::chrono::duration_cast<std::chrono::milliseconds>(newton_end - newton_start).count();
+         if (Mpi::Root())
+            {std::cout << std::endl <<"Time taken for one Time step: " << newton_duration/1000.0 << " seconds"<<  std::endl;}
+         break;
+      }
       
-      auto newton_end = std::chrono::high_resolution_clock::now();
-      auto newton_duration = std::chrono::duration_cast<std::chrono::milliseconds>(newton_end - newton_start).count();
-      if (Mpi::Root())
-         {std::cout << std::endl <<"Time taken for one Time step: " << newton_duration/1000.0 << " seconds"<<  std::endl;}
+
       
+
+      PreconCounter++;
       //Reset the preconditioner for the next time step
-      if (!Resetter){
+      if (PreconCounter % 20 == 0){
          line(80);
-         std::cout << "\nToo many Newton Iterations last step:\nResetting the setup\n" << std::endl;
+         std::cout << "Resetting the Preconditioner and Jacobian for next step" << std::endl;
          line(80);
          form.ResetGradient();
          jac_prec.ResetOperatorSetup();
-         Resetter = true;
       }
 
       si++;

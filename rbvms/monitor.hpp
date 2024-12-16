@@ -14,7 +14,7 @@
 
 using namespace mfem;
 
-namespace RBVMS 
+namespace RBVMS
 {
 
 /// This class help monitor the convergence of the linear Krylov solve.
@@ -52,19 +52,16 @@ public:
    SystemResidualMonitor(MPI_Comm comm,
                          const std::string& prefix_,
                          int print_lvl,
-                         Array<int> &offsets,
-                         bool& reset);
+                         Array<int> &offsets);
 
    /// Calculate residual
    virtual void ComputeResiduals(const Vector &r, Vector &vnorm);
 
-   virtual void ResetSolver(bool& reset);
    /// Print residual
    virtual void MonitorResidual(int it,
                                 real_t norm,
                                 const Vector &r,
-                                bool final,
-                                bool& reset);
+                                bool final);
 };
 
 } // namespace RBVMS
