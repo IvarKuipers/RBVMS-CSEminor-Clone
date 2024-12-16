@@ -59,7 +59,8 @@ void GeneralResidualMonitor::MonitorResidual(int it,
 SystemResidualMonitor::SystemResidualMonitor(MPI_Comm comm,
                                              const std::string& prefix_,
                                              int print_lvl,
-                                             Array<int> &offsets)
+                                             Array<int> &offsets,
+                                             bool& reset)
    : prefix(prefix_), bOffsets(offsets)
 {
    if (Mpi::Root())
@@ -83,11 +84,17 @@ void SystemResidualMonitor::ComputeResiduals(const Vector &r, Vector &vnorm)
    }
 }
 
+void SystemResidualMonitor::ResetSolver(bool& reset)
+{
+   reset = true;
+}
+
 // Print residual
 void SystemResidualMonitor::MonitorResidual(int it,
                                             real_t norm,
                                             const Vector &r,
-                                            bool final)
+                                            bool final,
+                                            bool& reset)
 {
    static auto Newt_start = std::chrono::high_resolution_clock::now();
    Vector vnorm(nvar);
@@ -110,6 +117,10 @@ void SystemResidualMonitor::MonitorResidual(int it,
                   <<vnorm[i]<<"\t"
                   <<std::setw(8)<<std::fixed<<std::setprecision(2)
                   <<100*vnorm[i]/norm0[i] << ", count test " << i << " %\n";
+      }
+      if (it >= 13)
+      {
+         ResetSolver(reset);
       }
 
       Newt_start = Newt_end;

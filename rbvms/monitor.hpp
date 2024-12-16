@@ -14,7 +14,7 @@
 
 using namespace mfem;
 
-namespace RBVMS
+namespace RBVMS 
 {
 
 /// This class help monitor the convergence of the linear Krylov solve.
@@ -57,6 +57,7 @@ public:
    /// Calculate residual
    virtual void ComputeResiduals(const Vector &r, Vector &vnorm);
 
+   virtual void ResetSolver(bool& reset);
    /// Print residual
    virtual void MonitorResidual(int it,
                                 real_t norm,

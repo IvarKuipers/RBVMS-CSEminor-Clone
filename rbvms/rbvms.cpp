@@ -217,7 +217,7 @@ int main(int argc, char *argv[])
    bOffsets[2] = spaces[1]->TrueVSize();
    bOffsets.PartialSum();
    //Define residual vector size
-   int nvar = bOffsets.Size()-1;
+   bool Resetter = false;
 
    // 5. Define the time stepping algorithm
 
@@ -238,7 +238,8 @@ int main(int argc, char *argv[])
    // Set up the Newton solver
    RBVMS::SystemResidualMonitor newton_monitor(MPI_COMM_WORLD,
                                                "Newton", 1,
-                                               bOffsets);
+                                               bOffsets,
+                                               Resetter);
    NewtonSolver newton_solver(MPI_COMM_WORLD);
    newton_solver.iterative_mode = true;
    newton_solver.SetPrintLevel(-1);
@@ -247,7 +248,7 @@ int main(int argc, char *argv[])
    newton_solver.SetAbsTol(1e-12);
    newton_solver.SetMaxIter(Newton_MaxIter );
    newton_solver.SetSolver(j_gmres);
-   Vector SystemResiduals(nvar);
+   
     
    // Define the physical parameters
    LibVectorCoefficient sol(dim, lib_file, "sol_u");
@@ -450,30 +451,24 @@ int main(int argc, char *argv[])
 
       // Actual time step
       xp0 = xp;
-      bool succes = true;
-      int retries = 0;
-      while(!succes && retries <= maxRetries)
-      {}
       auto newton_start = std::chrono::high_resolution_clock::now();
       ode_solver->Step(xp, t, dt);
 
-      PreconCounter++;
+      //PreconCounter++;
       
       auto newton_end = std::chrono::high_resolution_clock::now();
       auto newton_duration = std::chrono::duration_cast<std::chrono::milliseconds>(newton_end - newton_start).count();
       if (Mpi::Root())
          {std::cout << std::endl <<"Time taken for one Time step: " << newton_duration/1000.0 << " seconds"<<  std::endl;}
-
-      
-
       
       //Reset the preconditioner for the next time step
-      if (PreconCounter % 20 == 0){
+      if (Resetter){
          line(80);
-         std::cout << "\nResetting the setup\n" << std::endl;
+         std::cout << "\nToo many Newton Iterations last step:\nResetting the setup\n" << std::endl;
          line(80);
          form.ResetGradient();
          jac_prec.ResetOperatorSetup();
+         Resetter = false;
       }
 
       si++;
