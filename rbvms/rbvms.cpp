@@ -475,7 +475,10 @@ int main(int argc, char *argv[])
          form.ResetGradient();
          jac_prec.ResetOperatorSetup();
          newton_monitor.ResetCounter();
+      } else{
+         newton_monitor.ResetCounter();
       }
+
 
       si++;
       
