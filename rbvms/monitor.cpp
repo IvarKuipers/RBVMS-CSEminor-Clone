@@ -118,8 +118,6 @@ void SystemResidualMonitor::MonitorResidual(int it,
       }
       Newt_start = Newt_end;
    }
-   
-   std::cout << "Tester count " << iteration_count <<std::endl;
    iteration_count++;
    mfem::out<<std::flush;
 }
