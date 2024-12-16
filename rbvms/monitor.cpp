@@ -118,7 +118,7 @@ void SystemResidualMonitor::MonitorResidual(int it,
                   <<std::setw(8)<<std::fixed<<std::setprecision(2)
                   <<100*vnorm[i]/norm0[i] << ", count test " << i << " %\n";
       }
-      if (it >= 13)
+      if (it >= 2)
       {
          std::cout << "Invoking the resetter" << std::endl;
          ResetSolver(reset);
