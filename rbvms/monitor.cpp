@@ -60,7 +60,7 @@ SystemResidualMonitor::SystemResidualMonitor(MPI_Comm comm,
                                              const std::string& prefix_,
                                              int print_lvl,
                                              Array<int> &offsets)
-   : prefix(prefix_), bOffsets(offsets)
+   : prefix(prefix_), bOffsets(offsets), iteration_count(0)
 {
    if (Mpi::Root())
    {
@@ -83,6 +83,11 @@ void SystemResidualMonitor::ComputeResiduals(const Vector &r, Vector &vnorm)
    }
 }
 
+int SystemResidualMonitor::GetIterationCount()
+{return iteration_count;}
+
+void SystemResidualMonitor::ResetCounter()
+{iteration_count = 0;}
 // Print residual
 void SystemResidualMonitor::MonitorResidual(int it,
                                             real_t norm,
@@ -111,10 +116,10 @@ void SystemResidualMonitor::MonitorResidual(int it,
                   <<std::setw(8)<<std::fixed<<std::setprecision(2)
                   <<100*vnorm[i]/norm0[i] << " %\n";
       }
-
-      if (it >= 2)
-      {std::cout << "Iteration count" << std::endl;}
       Newt_start = Newt_end;
    }
+   
+   std::cout << "Tester count " << iteration_count <<std::endl;
+   iteration_count++;
    mfem::out<<std::flush;
 }
