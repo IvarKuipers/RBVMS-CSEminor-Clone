@@ -90,7 +90,7 @@ void SystemResidualMonitor::MonitorResidual(int it,
                                             bool final)
 {
    static auto Newt_start = std::chrono::high_resolution_clock::now();
-   static Vector vnorm(nvar);
+   Vector vnorm(nvar);
    ComputeResiduals(r, vnorm);
    for (int i = 0; i < nvar; ++i)
    {
@@ -109,7 +109,7 @@ void SystemResidualMonitor::MonitorResidual(int it,
          mfem::out<<std::setw(8)<<std::defaultfloat<<std::setprecision(4)
                   <<vnorm[i]<<"\t"
                   <<std::setw(8)<<std::fixed<<std::setprecision(2)
-                  <<100*vnorm[i]/norm0[i] << " %\n";
+                  <<100*vnorm[i]/norm0[i] << ", count test " << i << " %\n";
       }
 
       Newt_start = Newt_end;
