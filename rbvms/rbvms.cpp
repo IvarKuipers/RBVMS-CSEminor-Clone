@@ -466,9 +466,8 @@ int main(int argc, char *argv[])
          break;
       }
    
-      //PreconCounter++;
       //Reset the preconditioner for the next time step
-      if (newton_monitor.GetIterationCount() >= 11){
+      if (newton_monitor.GetIterationCount() >= 12){
          line(80);
          std::cout << "Resetting the Preconditioner and Jacobian for next step" << std::endl;
          line(80);
