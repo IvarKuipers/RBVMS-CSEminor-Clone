@@ -217,7 +217,7 @@ int main(int argc, char *argv[])
    bOffsets[2] = spaces[1]->TrueVSize();
    bOffsets.PartialSum();
    //Define residual vector size
-   bool Resetter = false;
+   bool Resetter = true;
 
    // 5. Define the time stepping algorithm
 
@@ -246,7 +246,7 @@ int main(int argc, char *argv[])
    newton_solver.SetMonitor(newton_monitor);
    newton_solver.SetRelTol(Newton_RelTol);
    newton_solver.SetAbsTol(1e-12);
-   newton_solver.SetMaxIter(Newton_MaxIter );
+   newton_solver.SetMaxIter(Newton_MaxIter);
    newton_solver.SetSolver(j_gmres);
    
     
@@ -462,13 +462,13 @@ int main(int argc, char *argv[])
          {std::cout << std::endl <<"Time taken for one Time step: " << newton_duration/1000.0 << " seconds"<<  std::endl;}
       
       //Reset the preconditioner for the next time step
-      if (Resetter){
+      if (!Resetter){
          line(80);
          std::cout << "\nToo many Newton Iterations last step:\nResetting the setup\n" << std::endl;
          line(80);
          form.ResetGradient();
          jac_prec.ResetOperatorSetup();
-         Resetter = false;
+         Resetter = true;
       }
 
       si++;

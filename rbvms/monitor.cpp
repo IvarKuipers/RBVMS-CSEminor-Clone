@@ -86,7 +86,7 @@ void SystemResidualMonitor::ComputeResiduals(const Vector &r, Vector &vnorm)
 
 void SystemResidualMonitor::ResetSolver(bool& reset)
 {
-   reset = true;
+   reset = false;
 }
 
 // Print residual
@@ -120,6 +120,7 @@ void SystemResidualMonitor::MonitorResidual(int it,
       }
       if (it >= 13)
       {
+         std::cout << "Invoking the resetter" << std::endl;
          ResetSolver(reset);
       }
 
