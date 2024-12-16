@@ -466,14 +466,15 @@ int main(int argc, char *argv[])
          break;
       }
    
-      PreconCounter++;
+      //PreconCounter++;
       //Reset the preconditioner for the next time step
-      if (PreconCounter % 20 == 0){
+      if (newton_monitor.GetIterationCount() >= 13){
          line(80);
          std::cout << "Resetting the Preconditioner and Jacobian for next step" << std::endl;
          line(80);
          form.ResetGradient();
          jac_prec.ResetOperatorSetup();
+         newton_monitor.ResetCounter();
       }
 
       si++;
