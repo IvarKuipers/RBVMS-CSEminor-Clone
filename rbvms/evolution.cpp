@@ -6,6 +6,7 @@
 //------------------------------------------------------------------------------
 
 #include "evolution.hpp"
+#include <chrono>
 
 using namespace mfem;
 using namespace RBVMS;
