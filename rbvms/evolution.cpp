@@ -107,7 +107,7 @@ void ParTimeDepBlockNonlinForm::SetTimeAndSolution(const real_t t,
 // Clear the gradient matrix
 void ParTimeDepBlockNonlinForm::ResetGradient()
 {
-   hasGrad = true;
+   hasGrad = false;
 }
 
 // Block T-Vector to Block T-Vector
@@ -386,7 +386,8 @@ BlockOperator & ParTimeDepBlockNonlinForm::GetGradient(const Vector &x) const
          pBlockGrad->SetBlock(s1, s2, phBlockGrad(s1,s2)->Ptr());
       }
    }
-   hasGrad = true;
+   //Has to be true to work with the reset
+   hasGrad = false;
    return *pBlockGrad;
 }
 
