@@ -72,8 +72,8 @@ void JacobianPreconditioner::SetOperator(const Operator &op)
       }
    }
    auto Precon_end = std::chrono::high_resolution_clock::now();
-   auto Precon_duration = std::chrono::duration_cast<std::chrono::milliseconds>(Precon_end - Precon_start).count();
-   std::cout << std::endl <<"Setup time for new preconditioner:  " << Precon_duration/1000.0 <<  std::endl;
+   auto Precon_duration = std::chrono::duration_cast<std::chrono::microseconds>(Precon_end - Precon_start).count();
+   std::cout << std::endl <<"Setup time for new preconditioner:  " << Precon_duration/1000000.0 <<  std::endl;
    //Has to be set to true to work
    is_operator_set = false;
 }
