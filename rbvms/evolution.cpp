@@ -323,7 +323,7 @@ void ParTimeDepBlockNonlinForm::MultBlocked(const BlockVector &bx,
 BlockOperator & ParTimeDepBlockNonlinForm::GetGradient(const Vector &x) const
 {
    if (hasGrad) return *pBlockGrad;
-
+   auto Jacobi_start = std::chrono::high_resolution_clock::now();
    if (pBlockGrad == NULL)
    {
       pBlockGrad = new BlockOperator(block_trueOffsets);
@@ -387,6 +387,9 @@ BlockOperator & ParTimeDepBlockNonlinForm::GetGradient(const Vector &x) const
       }
    }
    //Has to be true to work with the reset
+   auto Jacobi_end = std::chrono::high_resolution_clock::now();
+   auto Jacobi_duration = std::chrono::duration_cast<std::chrono::microseconds>(Jacobi_end - Jacobi_start).count();
+   std::cout << std::endl <<"Setup time for new preconditioner:  " << Precon_duration/1000000.0 <<  std::endl;
    hasGrad = false;
    return *pBlockGrad;
 }
