@@ -389,7 +389,7 @@ BlockOperator & ParTimeDepBlockNonlinForm::GetGradient(const Vector &x) const
    //Has to be true to work with the reset
    auto Jacobi_end = std::chrono::high_resolution_clock::now();
    auto Jacobi_duration = std::chrono::duration_cast<std::chrono::microseconds>(Jacobi_end - Jacobi_start).count();
-   std::cout << std::endl <<"Setup time for new preconditioner:  " << Precon_duration/1000000.0 <<  std::endl;
+   std::cout << std::endl <<"Setup time for new preconditioner:  " << Jacobi_duration/1000000.0 <<  std::endl;
    hasGrad = false;
    return *pBlockGrad;
 }
