@@ -107,7 +107,7 @@ void ParTimeDepBlockNonlinForm::SetTimeAndSolution(const real_t t,
 // Clear the gradient matrix
 void ParTimeDepBlockNonlinForm::ResetGradient()
 {
-   hasGrad = false;
+   hasGrad = true;
 }
 
 // Block T-Vector to Block T-Vector
