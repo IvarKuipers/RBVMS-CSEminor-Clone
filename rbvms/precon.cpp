@@ -6,6 +6,7 @@
 //------------------------------------------------------------------------------
 
 #include "precon.hpp"
+#include <chrono>
 
 using namespace mfem;
 using namespace RBVMS;
@@ -56,10 +57,11 @@ void JacobianPreconditioner::SetOperator(const Operator &op)
       //std::cout << "Making a new precondtioner\n";
    }
   // std::cout << "Setting Operator for block 1,1" << std::endl;
-   
+   auto Precon_start = std::chrono::high_resolution_clock::now();
    for (int i = 0; i < prec.Size(); ++i)
    {
       //std::cout << "\nSetting new preconditioner as operator" << std::endl;
+    
       prec[i]->SetOperator(jacobian->GetBlock(i,i));
       SetDiagonalBlock(i, prec[i]);
 
@@ -68,6 +70,9 @@ void JacobianPreconditioner::SetOperator(const Operator &op)
          SetBlock(j,i, const_cast<Operator*>(&jacobian->GetBlock(j,i)));
       }
    }
+   auto Precon_end = std::chrono::high_resolution_clock::now();
+   auto Precon_duration = std::chrono::duration_cast<std::chrono::milliseconds>(Precon_end - Precon_start).count();
+   std::cout << std::endl <<"Setup time for new preconditioner:  " << newton_duration/1000.0 <<  std::endl;
    is_operator_set = true;
 }
 
