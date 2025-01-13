@@ -1,6 +1,3 @@
-// This file is part of the RBVMS application. For more information and source
-// code availability visit https://idoakkerman.github.io/
-//
 // RBVMS is free software; you can redistribute it and/or modify it under the
 // terms of the BSD-3 license.
 //------------------------------------------------------------------------------
@@ -12,37 +9,44 @@ using namespace RBVMS;
 
 // Set the diagonal and off-diagonal operators
 void JacobianPreconditioner::SetOperator(const Operator &op)
-{  
-   if (is_operator_set){return;}
-
+{
+   double t0 = MPI_Wtime();
    BlockOperator *jacobian = (BlockOperator *) &op;
 
    if (prec[0] == nullptr)
    {
-      prec[0] = new HypreILU();//*Jpp);new HypreSmoother();//HypreILU()
-      std::cout << "Making a new precondtioner\n";
+      prec[0] = new HypreILU();
    }
-   
-   //prec[0]->SetOperator(jacobian->GetBlock(0,0));
+
+   std::cout << "Setting Operator for block 0,0" << std::endl;
+   prec[0]->SetOperator(jacobian->GetBlock(0,0));
    if (prec[1] == nullptr)
    {
       HypreParMatrix* Jpp = dynamic_cast<HypreParMatrix*>(&jacobian->GetBlock(1,1));
       HypreParMatrix *Jpp2 = const_cast<HypreParMatrix*>(Jpp);
-    //  prec[1] = new HypreSmoother();//*Jpp);
-      HypreILU *ilu = new HypreILU();
-      //Parasails->SetType(HypreSmoother::FIR);
-      //Parasails->SetParams(0.05, 1);
-      //Parasails->SetFilter(0.01); 
-      //Parasails->SetReuse(1);        
-      //Parasails->SetLogging(1); 
-      prec[1] = ilu;//*Jpp);
-      std::cout << "Making a new precondtioner\n";
+
+	  // Hier de Parasails teringzooi voor later, jahhhhh
+	  
+      //HypreParaSails *Parasails = new HypreParaSails(*Jpp);
+      //Parasails->SetFilter(0.01);
+      //Parasails-> SetSymmetry(2);   
+
+      // HypreILU parameter tuning testing. 
+      HypreILU *ilu = new HypreILU();  
+
+      // Tune ILU parameters here
+      //ilu->SetLevelOfFill(1);              // ILU(1)
+      //ilu->SetDropThreshold(1e-4);         // Drop tolerance
+      ilu->SetType(1);                     // RCM reordering
+      //ilu->SetMaxIter(2);                  // Iterative application
+
+      prec[1] = ilu;
+      
    }
-  // std::cout << "Setting Operator for block 1,1" << std::endl;
-   
+   //std::cout << "Setting Operator for block 1,1" << std::endl;
+
    for (int i = 0; i < prec.Size(); ++i)
    {
-      std::cout << "\nSetting preconditioner as operator" << std::endl;
       prec[i]->SetOperator(jacobian->GetBlock(i,i));
       SetDiagonalBlock(i, prec[i]);
 
@@ -51,7 +55,9 @@ void JacobianPreconditioner::SetOperator(const Operator &op)
          SetBlock(j,i, const_cast<Operator*>(&jacobian->GetBlock(j,i)));
       }
    }
-   is_operator_set = true;
+   double t1 = MPI_Wtime(); 
+   double setup_time = t1 - t0;
+   std::cout << "Setup time for new preconditioner:  " << setup_time << std::endl;
 }
 
 void JacobianPreconditioner::ResetOperatorSetup()
@@ -67,4 +73,3 @@ JacobianPreconditioner::~JacobianPreconditioner()
       delete prec[i];
    }
 }
-
