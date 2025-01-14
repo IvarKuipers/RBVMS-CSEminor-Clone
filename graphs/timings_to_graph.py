@@ -27,13 +27,13 @@ def generate_combined_graphs(csv_files, output_dir):
        
         # Calculate averages for this run
         avg_setup_time = df['Setup Time'].mean()
-        avg_total_time = df['Total Time'].mean()
+        avg_total_time = df['Time Per Iteration'].mean()
         run_label = os.path.basename(csv_file).split('.')[0]
         
         averages.append({
             'Run': run_label,
             'Average Setup Time': avg_setup_time,
-            'Average Total Time': avg_total_time
+            'Average Iteration Time': avg_total_time
         })
         
         label = os.path.basename(csv_file).split('.')[0]  # Use file name as label
@@ -58,25 +58,33 @@ def generate_combined_graphs(csv_files, output_dir):
     plot_combined('Step', 'Total Time', 'Total Time (s)', 'Total Time per Step', 'total_time_vs_step.png')
     plot_combined('Step', 'Setup Time', 'Setup Time (s)', 'Setup Time per Step', 'setup_time_vs_step.png')
     plot_combined('Step', 'Solve Time', 'Solve Time (s)', 'Solve Time per Step', 'solve_time_vs_step.png')
-    plot_combined('Step', 'Average Time Per Iteration', 'Time Per Iteration (s)', 'Average Time Per Iteration per Step', 'time_per_iteration_vs_step.png')
+    plot_combined('Step', 'Time Per Iteration', 'Time Per Iteration (s)', 'Average Time Per Iteration per Step', 'time_per_iteration_vs_step.png')
     plot_combined('Step', 'Newton Cycles', 'Newton Cycles', 'Newton Cycles per Step', 'newton_cycles_vs_step.png')
     plot_combined('Step', 'Average Krylov Iterations', 'Average Krylov Iterations', 
                   'Average Krylov Iterations per Step', 'average_krylov_iterations_vs_step.png')
 
     # Create a bar chart for average setup and execution times
     avg_df = pd.DataFrame(averages)
-    avg_df.plot(kind='bar', x='Run', y=['Average Setup Time', 'Average Total Time'], 
+    ax = avg_df.plot(kind='bar', x='Run', y=['Average Setup Time', 'Average Iteration Time'], 
                 title='Average Setup and Execution Time per Run', 
                 ylabel='Time (s)', figsize=(8, 6))
+
+    for container in ax.containers:
+        ax.bar_label(container, fmt='%.4f', label_type='edge')  # Format with 4 decimal places
+
+    # Customize legend
+    handles, labels = ax.get_legend_handles_labels()
+    plt.legend(handles, labels, title='Metrics')
+
     plt.xticks(rotation=45, ha='right')
     plt.tight_layout()
     plt.savefig(os.path.join(output_dir, 'average_setup_execution_time.png'))
     plt.close()
-
+    
 # Example usage
 csv_files = [
     #'timings/run1.csv',  # Path to the first CSV file
-    'timings/HypreILU.csv',  # Path to the second CSV file
+    'timings/HypreSmoother_Sweep(1).csv',  # Path to the second CSV file
 ]
 output_dir = 'generated_graphs'
 
