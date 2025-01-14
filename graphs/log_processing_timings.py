@@ -37,7 +37,7 @@ def parse_log_to_csv(log_file, csv_file):
             # Save previous step data if exists
             if current_step is not None:
                 solve_time = sum(iteration_times)
-                time_per_iter = solve_time / len(iteration_times) if iteration_times else 0
+                time_per_iter = solve_time / newton_cycles if iteration_times else 0
                 data.append([current_step, setup_time, solve_time, time_per_iter, total_time, newton_cycles, newton_times])
 
             # Start new step
@@ -76,7 +76,7 @@ def parse_log_to_csv(log_file, csv_file):
     # Save last step data
     if current_step is not None:
         solve_time = sum(iteration_times)
-        time_per_iter = solve_time / len(iteration_times) if iteration_times else 0
+        time_per_iter = solve_time / newton_cycles if iteration_times else 0
         data.append([current_step, setup_time, solve_time, time_per_iter, total_time, newton_cycles, newton_times])
 
     # Write to CSV
@@ -89,7 +89,7 @@ def parse_log_to_csv(log_file, csv_file):
             writer.writerow(row)
 
 log_file_path = '../cases/von-karman-re100/log0'  
-csv_output_path = 'timings/run1.csv'    # Save the CSV in the graphs folder
+csv_output_path = 'timings/HypreILU.csv'    # Save the CSV in the graphs folder
 
 # Parse the log file and generate graphs
 parse_log_to_csv(log_file_path, csv_output_path)

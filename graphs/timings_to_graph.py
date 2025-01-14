@@ -58,7 +58,7 @@ def generate_combined_graphs(csv_files, output_dir):
     plot_combined('Step', 'Total Time', 'Total Time (s)', 'Total Time per Step', 'total_time_vs_step.png')
     plot_combined('Step', 'Setup Time', 'Setup Time (s)', 'Setup Time per Step', 'setup_time_vs_step.png')
     plot_combined('Step', 'Solve Time', 'Solve Time (s)', 'Solve Time per Step', 'solve_time_vs_step.png')
-    plot_combined('Step', 'Time Per Iteration', 'Time Per Iteration (s)', 'Time Per Iteration per Step', 'time_per_iteration_vs_step.png')
+    plot_combined('Step', 'Average Time Per Iteration', 'Time Per Iteration (s)', 'Average Time Per Iteration per Step', 'time_per_iteration_vs_step.png')
     plot_combined('Step', 'Newton Cycles', 'Newton Cycles', 'Newton Cycles per Step', 'newton_cycles_vs_step.png')
     plot_combined('Step', 'Average Krylov Iterations', 'Average Krylov Iterations', 
                   'Average Krylov Iterations per Step', 'average_krylov_iterations_vs_step.png')
@@ -76,7 +76,8 @@ def generate_combined_graphs(csv_files, output_dir):
 # Example usage
 csv_files = [
     'timings/run1.csv',  # Path to the first CSV file
-    'timings/timing.csv',  # Path to the second CSV file
+    'timings/HypreILU.csv',  # Path to the second CSV file
+
 ]
 output_dir = 'generated_graphs'
 

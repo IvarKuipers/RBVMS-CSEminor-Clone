@@ -18,7 +18,7 @@ void JacobianPreconditioner::SetOperator(const Operator &op)
       prec[0] = new HypreILU();
    }
 
-   std::cout << "Setting Operator for block 0,0" << std::endl;
+   //std::cout << "Setting Operator for block 0,0" << std::endl;
    prec[0]->SetOperator(jacobian->GetBlock(0,0));
    if (prec[1] == nullptr)
    {
