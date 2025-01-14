@@ -386,7 +386,8 @@ BlockOperator & ParTimeDepBlockNonlinForm::GetGradient(const Vector &x) const
          pBlockGrad->SetBlock(s1, s2, phBlockGrad(s1,s2)->Ptr());
       }
    }
-   hasGrad = true;
+   // Has to be true for the Jacobi reset
+   hasGrad = false;
    return *pBlockGrad;
 }
 

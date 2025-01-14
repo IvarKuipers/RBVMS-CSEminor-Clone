@@ -452,7 +452,7 @@ int main(int argc, char *argv[])
       {std::cout << std::endl <<"Time taken for one Time step: " << newton_duration/1000.0 << " seconds"<<  std::endl;}
       si++;
       //Reset the operator for the next time step
-      jac_prec.ResetOperatorSetup();
+      //jac_prec.ResetOperatorSetup();
 
       // Postprocess solution
       real_t cfl = evo.GetCFL();
