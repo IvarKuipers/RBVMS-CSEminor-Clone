@@ -6,6 +6,7 @@
 //------------------------------------------------------------------------------
 
 #include "weakform.hpp"
+#include <chrono>
 
 using namespace mfem;
 using namespace RBVMS;
