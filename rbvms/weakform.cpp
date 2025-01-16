@@ -310,15 +310,35 @@ void IncNavStoIntegrator::AssembleElementGrad(
    elf_u.UseExternalData(elsol[0]->GetData(), dof_u, dim);
    elf_du.UseExternalData(elrate[0]->GetData(), dof_u, dim);
 
-   elmats(0,0)->SetSize(dof_u*dim, dof_u*dim);
-   elmats(0,1)->SetSize(dof_u*dim, dof_p);
-   elmats(1,0)->SetSize(dof_p, dof_u*dim);
-   elmats(1,1)->SetSize(dof_p, dof_p);
+   // elmats(0,0)->SetSize(dof_u*dim, dof_u*dim);
+   // elmats(0,1)->SetSize(dof_u*dim, dof_p);
+   // elmats(1,0)->SetSize(dof_p, dof_u*dim);
+   // elmats(1,1)->SetSize(dof_p, dof_p);
 
-   *elmats(0,0) = 0.0;
-   *elmats(0,1) = 0.0;
-   *elmats(1,0) = 0.0;
-   *elmats(1,1) = 0.0;
+   // *elmats(0,0) = 0.0;
+   // *elmats(0,1) = 0.0;
+   // *elmats(1,0) = 0.0;
+   // *elmats(1,1) = 0.0;
+
+   // New way of dereferencing elmats
+   DenseMatrix &mat_wu = *elmats(0,0);
+   DenseMatrix &mat_wp = *elmats(0,1);
+   DenseMatrix &mat_qu = *elmats(1,0);
+   DenseMatrix &mat_qp = *elmats(1,1);
+
+   // DenseMatrix mat_wu1(dof_u, dof_u);
+
+   mat_wu.SetSize(dof_u*dim, dof_u*dim);
+   mat_wp.SetSize(dof_u*dim, dof_p);
+   mat_qu.SetSize(dof_p, dof_u*dim);
+   mat_qp.SetSize(dof_p, dof_p);
+
+   // mat_wu1 = 0.0;
+   mat_wu = 0.0;
+   mat_wp = 0.0;
+   mat_qu = 0.0;
+   mat_qp = 0.0;
+   // New way of dereferencing elmats
 
    sh_u.SetSize(dof_u);
    shg_u.SetSize(dof_u, dim);
@@ -326,6 +346,16 @@ void IncNavStoIntegrator::AssembleElementGrad(
    dupdu.SetSize(dof_u);
    sh_p.SetSize(dof_p);
    shg_p.SetSize(dof_p, dim);
+
+   //R - initialize matrices and vectors with correct size
+   DenseMatrix mat_matrix, mu_mat, tau_mat, wp_mat, qu_mat;
+   Vector shg_u_1_vec, shg_u_2_vec, shg_p_vec;
+
+   mat_matrix.SetSize(dof_u,dof_u);
+   mu_mat.SetSize(dof_u,dof_u);
+   tau_mat.SetSize(dof_u,dof_u);
+   wp_mat.SetSize(dof_u,dof_u);
+   qu_mat.SetSize(dof_u,dof_u);
 
    int intorder = 2*el[0]->GetOrder();
    const IntegrationRule &ir = IntRules.Get(el[0]->GetGeomType(), intorder);
