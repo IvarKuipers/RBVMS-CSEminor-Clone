@@ -1,0 +1,52 @@
+Flat profile:
+
+Each sample counts as 0.01 seconds.
+  %   cumulative   self              self     total
+ time   seconds   seconds    calls  ms/call  ms/call  name
+ 12.38     10.80    10.80                             mfem::AddMult_a_VWt(double, mfem::Vector const&, mfem::Vector const&, mfem::DenseMatrix&)
+ 10.75     20.18     9.38                             mfem::DenseMatrix::AddSubMatrix(int, int, mfem::DenseMatrix const&)
+  6.52     25.87     5.69                             mfem::SparseMatrix::AddSubMatrix(mfem::Array<int> const&, mfem::Array<int> const&, mfem::DenseMatrix const&, int)
+  6.37     31.43     5.56                             hypre_ILUSetupILUKSymbolic
+  6.04     36.70     5.27                             hypre_CSRMatrixMatvecOutOfPlaceHost
+  4.15     40.32     3.62 369655998     0.00     0.00  mfem::Memory<double>::operator[](int)
+  3.76     43.60     3.28                             mfem::DenseMatrix::operator=(double)
+  3.51     46.66     3.06                             mfem::KnotVector::CalcShape(mfem::Vector&, int, double) const
+  2.81     49.11     2.45                             hypre_BoomerAMGBuildCoarseOperatorKT
+  2.56     51.34     2.23                             RBVMS::IncNavStoIntegrator::AssembleWeakDirBCGrad(mfem::Array<mfem::FiniteElement const*> const&, mfem::Array<mfem::FiniteElement const*> const&, mfem::FaceElementTransformations&, mfem::Array<mfem::Vector const*> const&, mfem::Array2D<mfem::DenseMatrix*> const&)
+  2.40     53.43     2.09 264955718     0.00     0.00  mfem::Vector::operator()(int)
+  2.36     55.49     2.06                             hypre_ILUSolveLU
+  2.35     57.54     2.05 104700280     0.00     0.00  mfem::DenseMatrix::operator()(int, int)
+  2.22     59.48     1.94                             mfem::MultAAt(mfem::DenseMatrix const&, mfem::DenseMatrix&)
+  2.10     61.31     1.83                             mfem::AddMult_a_AAt(double, mfem::DenseMatrix const&, mfem::DenseMatrix&)
+  2.04     63.09     1.78                             mfem::SparseMatrix::SearchRow(int)
+  1.95     64.79     1.70                             mfem::DenseMatrix::AddSubMatrix(int, mfem::DenseMatrix const&)
+  1.91     66.46     1.67                             mfem::KnotVector::CalcDShape(mfem::Vector&, int, double) const
+  1.78     68.01     1.55   254116     0.01     0.04  RBVMS::IncNavStoIntegrator::AssembleElementGrad(mfem::Array<mfem::FiniteElement const*> const&, mfem::ElementTransformation&, mfem::Array<mfem::Vector const*> const&, mfem::Array<mfem::Vector const*> const&, mfem::Array2D<mfem::DenseMatrix*> const&)
+  1.70     69.49     1.48                             mfem::NURBS2DFiniteElement::CalcDShape(mfem::IntegrationPoint const&, mfem::DenseMatrix&) const
+  1.59     70.88     1.39                             mfem::Mult(mfem::DenseMatrix const&, mfem::DenseMatrix const&, mfem::DenseMatrix&)
+  1.04     71.79     0.91                             mfem::MultAtB(mfem::DenseMatrix const&, mfem::DenseMatrix const&, mfem::DenseMatrix&)
+  0.88     72.56     0.77                             mfem::DenseMatrix::Mult(mfem::Vector const&, mfem::Vector&) const
+  0.86     73.31     0.75                             mfem::AddMultVVt(mfem::Vector const&, mfem::DenseMatrix&)
+  0.84     74.04     0.73  1016464     0.00     0.00  mfem::Array<mfem::DenseMatrix*>::operator[](int) const
+  0.81     74.75     0.71                             mfem::DenseMatrix::GetColumn(int, mfem::Vector&) const
+  0.80     75.45     0.70                             mfem::DenseMatrix::operator*=(double)
+  0.79     76.14     0.69                             mfem::Vector::operator*(mfem::Vector const&) const
+  0.76     76.80     0.66                             mfem::DenseMatrix::MultTranspose(mfem::Vector const&, mfem::Vector&) const
+  0.75     77.45     0.65  1016464     0.00     0.00  mfem::Array2D<mfem::DenseMatrix*>::operator()(int, int) const
+  0.70     78.06     0.61                             mfem::SparseMatrix::operator=(double)
+  0.65     78.62     0.56  8723712     0.00     0.00  RBVMS::IncNavStoIntegrator::GetTau(double&, double&, double&, double&, mfem::Vector&, mfem::ElementTransformation&)
+  0.62     79.17     0.54                             mfem::NURBS2DFiniteElement::CalcShape(mfem::IntegrationPoint const&, mfem::Vector&) const
+  0.61     79.70     0.54  1016464     0.00     0.00  mfem::Memory<mfem::DenseMatrix*>::operator[](int) const
+  0.57     80.20     0.50                             hypre_ILUMinHeapRemoveIIIi
+  0.47     80.61     0.41                             mfem::Vector::operator*=(double)
+  0.38     80.94     0.33   291116     0.00     0.01  RBVMS::IncNavStoIntegrator::AssembleElementVector(mfem::Array<mfem::FiniteElement const*> const&, mfem::ElementTransformation&, mfem::Array<mfem::Vector const*> const&, mfem::Array<mfem::Vector const*> const&, mfem::Array<mfem::Vector*> const&, double&)
+  0.34     81.24     0.30                             mfem::Vector::Add(double, mfem::Vector const&)
+  0.34     81.54     0.30                             mfem::Vector::operator+=(mfem::Vector const&)
+  0.32     81.82     0.28                             mfem::Vector::operator/=(double)
+  0.31     82.09     0.27                             mfem::Vector::operator-=(mfem::Vector const&)
+  0.28     82.33     0.24                             hypre_swap2i
+  0.25     82.55     0.22                             hypre_BinarySearch
+  0.24     82.76     0.21                             mfem::AddMult_a_ABt(double, mfem::DenseMatrix const&, mfem::DenseMatrix const&, mfem::DenseMatrix&)
+  0.23     82.96     0.20                             mfem::Array<hypre_ParVector_struct*>::GrowSize(int)
+  0.22     83.15     0.19                             mfem::internal::hypre_CSRMatrixElimCreate(hypre_CSRMatrix*, hypre_CSRMatrix*, int, int*, int, int*, int*)
+  0.22     83.34     0.19                             hypre_swap
