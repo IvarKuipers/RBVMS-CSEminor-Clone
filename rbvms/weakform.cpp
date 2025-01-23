@@ -277,29 +277,29 @@ void IncNavStoIntegrator::AssembleElementGrad(
    const Array<const Vector *> &elrate,
    const Array2D<DenseMatrix *> &elmats)
 {
-   double ForloopIntroductionTime = 0;
-   double MomentumVelocityBlockTime = 0;
-   double MomentumPressureBlockTime = 0;
-   double ContinuityVelocityBlockTime = 0;
-   double ContinuityPressureBlockTime = 0;
+   // double ForloopIntroductionTime = 0;
+   // double MomentumVelocityBlockTime = 0;
+   // double MomentumPressureBlockTime = 0;
+   // double ContinuityVelocityBlockTime = 0;
+   // double ContinuityPressureBlockTime = 0;
 
-   double ForloopIntroductionTimeSum = 0;
-   double MomentumVelocityBlockTimeSum = 0;
-   double MomentumPressureBlockTimeSum = 0;
-   double ContinuityVelocityBlockTimeSum = 0;
-   double ContinuityPressureBlockTimeSum = 0;
-   double MomentumVelocityBlockCounter1 = 0;
-   double MomentumVelocityBlockCounter2 = 0;
-   double MomentumVelocityBlockCounter3 = 0;
+   // double ForloopIntroductionTimeSum = 0;
+   // double MomentumVelocityBlockTimeSum = 0;
+   // double MomentumPressureBlockTimeSum = 0;
+   // double ContinuityVelocityBlockTimeSum = 0;
+   // double ContinuityPressureBlockTimeSum = 0;
+   // double MomentumVelocityBlockCounter1 = 0;
+   // double MomentumVelocityBlockCounter2 = 0;
+   // double MomentumVelocityBlockCounter3 = 0;
 
-   int ForloopIntroductionCounter = 0;
-   int MomentumVelocityBlockCounter = 0;
-   int MomentumPressureBlockCounter = 0;
-   int ContinuityVelocityBlockCounter = 0;
-   int ContinuityPressureBlockCounter = 0;
+   // int ForloopIntroductionCounter = 0;
+   // int MomentumVelocityBlockCounter = 0;
+   // int MomentumPressureBlockCounter = 0;
+   // int ContinuityVelocityBlockCounter = 0;
+   // int ContinuityPressureBlockCounter = 0;
    
    // Start Measuring Time
-   auto TimeStart1 = std::chrono::high_resolution_clock::now();
+   // auto TimeStart1 = std::chrono::high_resolution_clock::now();
 
 
    int dof_u = el[0]->GetDof();
@@ -473,12 +473,12 @@ void IncNavStoIntegrator::AssembleElementGrad(
       // Continuity - Pressure block (w,p)
       AddMult_a_AAt(-w*tau_m*dt, shg_p, *elmats(1,1));
       
-   bool printMeasurements = true;
-   if (printMeasurements){
-      double IntroductionTime = 0;
-      // auto IntroductionTime = std::chrono::duration_cast<std::chrono::microseconds>(TimeEnd1 - TimeStart1).count();
-      auto TotalTimeEnd = std::chrono::high_resolution_clock::now();
-      auto TotalTime = std::chrono::duration_cast<std::chrono::microseconds>(TotalTimeEnd - TimeStart1).count();
+   // bool printMeasurements = true;
+   // if (printMeasurements){
+   //    double IntroductionTime = 0;
+   //    // auto IntroductionTime = std::chrono::duration_cast<std::chrono::microseconds>(TimeEnd1 - TimeStart1).count();
+   //    auto TotalTimeEnd = std::chrono::high_resolution_clock::now();
+   //    auto TotalTime = std::chrono::duration_cast<std::chrono::microseconds>(TotalTimeEnd - TimeStart1).count();
 
       // std::cout << "ir.GetNPoints() = " << ir.GetNPoints() << ", dim = " << dim << ", dof_u = " << dof_u << ", dof_p = " << dof_p << std::endl;
       // std::cout << "---------------------- AEG  Profile -------------------" << std::endl;
@@ -492,8 +492,8 @@ void IncNavStoIntegrator::AssembleElementGrad(
       // std::cout << "Sum of Elapsed time: " << IntroductionTime + ForloopIntroductionTimeSum + MomentumVelocityBlockTimeSum + MomentumPressureBlockTimeSum + ContinuityVelocityBlockTimeSum + ContinuityPressureBlockTimeSum<< " microseconds" << std::endl;
       // std::cout << "--------------------- Next AEG call ---------------------\n" << std::endl;
 
-      std::cout << IntroductionTime << "\t" << ForloopIntroductionTimeSum << "\t" << MomentumVelocityBlockTimeSum << "\t" << MomentumPressureBlockTimeSum << "\t" << ContinuityVelocityBlockTimeSum << "\t" << ContinuityPressureBlockTimeSum << "\t" << TotalTime << std::endl;
-      }
+      // std::cout << IntroductionTime << "\t" << ForloopIntroductionTimeSum << "\t" << MomentumVelocityBlockTimeSum << "\t" << MomentumPressureBlockTimeSum << "\t" << ContinuityVelocityBlockTimeSum << "\t" << ContinuityPressureBlockTimeSum << "\t" << TotalTime << std::endl;
+      // }
    }
 
 }
