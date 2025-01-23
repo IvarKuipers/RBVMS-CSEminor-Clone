@@ -21,6 +21,7 @@
 #include "monitor.hpp"
 
 #include <sys/stat.h>
+#include <chrono>
 
 using namespace std;
 using namespace mfem;
@@ -109,6 +110,10 @@ int main(int argc, char *argv[])
    int    GMRES_MaxIter = 500;
    double Newton_RelTol = 1e-3;
    int    Newton_MaxIter = 10;
+   int    PreconCounter = 0; 
+   const int maxRetries = 3;
+   
+
 
    args.AddOption(&GMRES_RelTol, "-lt", "--linear-tolerance",
                   "Relative tolerance for the GMRES solver.");
@@ -214,12 +219,14 @@ int main(int argc, char *argv[])
    bOffsets[1] = spaces[0]->TrueVSize();
    bOffsets[2] = spaces[1]->TrueVSize();
    bOffsets.PartialSum();
+   //Define residual vector size
+   int nvar = bOffsets.Size()-1;
 
    // 5. Define the time stepping algorithm
 
    // Set up the preconditioner
    RBVMS::JacobianPreconditioner jac_prec(bOffsets);
-
+   //std::cout << "Preconditioner has been made\n";
    // Set up the Jacobian solver
    RBVMS::GeneralResidualMonitor j_monitor(MPI_COMM_WORLD,"\t\tFGMRES", 25);
    FGMRESSolver j_gmres(MPI_COMM_WORLD);
@@ -244,6 +251,8 @@ int main(int argc, char *argv[])
    newton_solver.SetMaxIter(Newton_MaxIter );
    newton_solver.SetSolver(j_gmres);
 
+   Vector SystemResiduals(nvar);
+    
    // Define the physical parameters
    LibVectorCoefficient sol(dim, lib_file, "sol_u");
    LibCoefficient mu(lib_file, "mu", false, mu_param);
@@ -444,9 +453,38 @@ int main(int argc, char *argv[])
 
       // Actual time step
       xp0 = xp;
-      ode_solver->Step(xp, t, dt);
-      si++;
+      bool succes = false;
+      int retries = 0;
+      while(!succes && retries <= maxRetries)
+      {
+         auto newton_start = std::chrono::high_resolution_clock::now();
 
+         ode_solver->Step(xp, t, dt);
+
+         
+         auto newton_end = std::chrono::high_resolution_clock::now();
+         auto newton_duration = std::chrono::duration_cast<std::chrono::milliseconds>(newton_end - newton_start).count();
+         if (Mpi::Root())
+            {std::cout << std::endl <<"Time taken for one Time step: " << newton_duration/1000.0 << " seconds"<<  std::endl;}
+         break;
+      }
+   
+      //Reset the preconditioner for the next time step
+      if (newton_monitor.GetIterationCount() >= 1){
+         if (Mpi::Root()){
+         line(80);
+         std::cout << "Too many Iterations last step\nResetting the Preconditioner and Jacobian for next step" << std::endl;
+         line(80);}
+         //form.ResetGradient();
+         //jac_prec.ResetOperatorSetup();
+         //newton_monitor.ResetCounter();
+      } else{
+         //newton_monitor.ResetCounter();
+      }
+
+
+      si++;
+      
       // Postprocess solution
       real_t cfl = evo.GetCFL();
       DenseMatrix bdrForce = evo.GetForce();

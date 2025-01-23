@@ -46,6 +46,7 @@ private:
    int print_level, nvar;
    mutable Vector norm0;
    Array<int> &bOffsets;
+   int iteration_count;
 
 public:
    /// Constructor
@@ -53,6 +54,12 @@ public:
                          const std::string& prefix_,
                          int print_lvl,
                          Array<int> &offsets);
+
+   virtual int GetIterationCount();
+
+   virtual void ResetCounter();
+   /// Calculate residual
+   virtual void ComputeResiduals(const Vector &r, Vector &vnorm);
 
    /// Print residual
    virtual void MonitorResidual(int it,

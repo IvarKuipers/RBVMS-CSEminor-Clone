@@ -6,6 +6,7 @@
 //------------------------------------------------------------------------------
 
 #include "evolution.hpp"
+#include <chrono>
 
 using namespace mfem;
 using namespace RBVMS;
@@ -27,6 +28,7 @@ void Evolution::ImplicitSolve(const real_t dt,
    form.SetTimeAndSolution(t, dt, u0);
    Vector zero;
    solver.Mult(zero, dudt);
+   count++;
    dudt_ = dudt;
 }
 
@@ -46,7 +48,7 @@ DenseMatrix Evolution::GetForce()
 ParTimeDepBlockNonlinForm::
    ParTimeDepBlockNonlinForm(Array<ParFiniteElementSpace *> &pfes,
                              RBVMS::IncNavStoIntegrator &integrator)
-   : ParBlockNonlinearForm(pfes), integrator(integrator)
+   : ParBlockNonlinearForm(pfes), integrator(integrator), hasGrad(false)
 {
 }
 
@@ -101,6 +103,12 @@ void ParTimeDepBlockNonlinForm::SetTimeAndSolution(const real_t t,
    x0 = x0_;
    x.SetSize(x0.Size());
    integrator.SetTimeAndStep(t,dt);
+}
+
+// Clear the gradient matrix
+void ParTimeDepBlockNonlinForm::ResetGradient()
+{
+   hasGrad = false;
 }
 
 // Block T-Vector to Block T-Vector
@@ -315,6 +323,8 @@ void ParTimeDepBlockNonlinForm::MultBlocked(const BlockVector &bx,
 // Get Gradient
 BlockOperator & ParTimeDepBlockNonlinForm::GetGradient(const Vector &x) const
 {
+   if (hasGrad) return *pBlockGrad;
+   auto Jacobi_start = std::chrono::high_resolution_clock::now();
    if (pBlockGrad == NULL)
    {
       pBlockGrad = new BlockOperator(block_trueOffsets);
@@ -377,7 +387,11 @@ BlockOperator & ParTimeDepBlockNonlinForm::GetGradient(const Vector &x) const
          pBlockGrad->SetBlock(s1, s2, phBlockGrad(s1,s2)->Ptr());
       }
    }
-
+   //Has to be true to work with the reset
+   auto Jacobi_end = std::chrono::high_resolution_clock::now();
+   auto Jacobi_duration = std::chrono::duration_cast<std::chrono::microseconds>(Jacobi_end - Jacobi_start).count();
+   std::cout << std::endl <<"Setup time for new Jacobi:  " << Jacobi_duration/1000000.0 <<  std::endl;
+   hasGrad = false;
    return *pBlockGrad;
 }
 
