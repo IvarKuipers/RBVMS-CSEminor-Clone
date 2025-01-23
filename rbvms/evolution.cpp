@@ -391,7 +391,7 @@ BlockOperator & ParTimeDepBlockNonlinForm::GetGradient(const Vector &x) const
    auto Jacobi_end = std::chrono::high_resolution_clock::now();
    auto Jacobi_duration = std::chrono::duration_cast<std::chrono::microseconds>(Jacobi_end - Jacobi_start).count();
    std::cout << std::endl <<"Setup time for new Jacobi:  " << Jacobi_duration/1000000.0 <<  std::endl;
-   hasGrad = false;
+   hasGrad = true;
    return *pBlockGrad;
 }
 
