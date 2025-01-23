@@ -228,7 +228,7 @@ int main(int argc, char *argv[])
    RBVMS::JacobianPreconditioner jac_prec(bOffsets);
    //std::cout << "Preconditioner has been made\n";
    // Set up the Jacobian solver
-   RBVMS::GeneralResidualMonitor j_monitor(MPI_COMM_WORLD,"\t\tFGMRES", 25);
+   RBVMS::GeneralResidualMonitor j_monitor(MPI_COMM_WORLD,"\t\tFGMRES", 1);
    FGMRESSolver j_gmres(MPI_COMM_WORLD);
    j_gmres.iterative_mode = false;
    j_gmres.SetRelTol(GMRES_RelTol);
