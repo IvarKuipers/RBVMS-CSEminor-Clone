@@ -240,7 +240,7 @@ int main(int argc, char *argv[])
 
    // Set up the Newton solver
    RBVMS::SystemResidualMonitor newton_monitor(MPI_COMM_WORLD,
-                                               "Newton", 1,
+                                               "Newton", 25,
                                                bOffsets);
    NewtonSolver newton_solver(MPI_COMM_WORLD);
    newton_solver.iterative_mode = true;
