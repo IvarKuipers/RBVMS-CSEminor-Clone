@@ -226,7 +226,7 @@ int main(int argc, char *argv[])
 
    // Set up the preconditioner
    RBVMS::JacobianPreconditioner jac_prec(bOffsets);
-   //std::cout << "Preconditioner has been made\n";
+   
    // Set up the Jacobian solver
    RBVMS::GeneralResidualMonitor j_monitor(MPI_COMM_WORLD,"\t\tFGMRES", 25);
    FGMRESSolver j_gmres(MPI_COMM_WORLD);
@@ -453,32 +453,27 @@ int main(int argc, char *argv[])
 
       // Actual time step
       xp0 = xp;
-      bool succes = false;
-      int retries = 0;
-      while(!succes && retries <= maxRetries)
-      {
-         auto newton_start = std::chrono::high_resolution_clock::now();
+      //Time one Time step
+      auto newton_start = std::chrono::high_resolution_clock::now();
 
-         ode_solver->Step(xp, t, dt);
+      ode_solver->Step(xp, t, dt);
 
-         
-         auto newton_end = std::chrono::high_resolution_clock::now();
-         auto newton_duration = std::chrono::duration_cast<std::chrono::milliseconds>(newton_end - newton_start).count();
-         if (Mpi::Root())
-            {std::cout << std::endl <<"Time taken for one Time step: " << newton_duration/1000.0 << " seconds"<<  std::endl;}
-         break;
-      }
-   
-      //Reset the preconditioner for the next time step
+      auto newton_end = std::chrono::high_resolution_clock::now();
+      auto newton_duration = std::chrono::duration_cast<std::chrono::milliseconds>(newton_end - newton_start).count();
+      if (Mpi::Root())
+         {std::cout << std::endl <<"Time taken for one Time step: " << newton_duration/1000.0 << " seconds"<<  std::endl;}
+
+      //Reset the Jacobian and preconditioner for the next time step
       if (newton_monitor.GetIterationCount() >= 13){
          if (Mpi::Root()){
-         line(80);
-         std::cout << "Too many Iterations last step\nResetting the Preconditioner and Jacobian for next step" << std::endl;
-         line(80);}
+            line(80);
+            std::cout << "Too many Iterations last step\nResetting the Preconditioner and Jacobian for next step" << std::endl;
+            line(80);
+         }
          form.ResetGradient();
          jac_prec.ResetOperatorSetup();
          newton_monitor.ResetCounter();
-      } else{
+      } else {
          newton_monitor.ResetCounter();
       }
 

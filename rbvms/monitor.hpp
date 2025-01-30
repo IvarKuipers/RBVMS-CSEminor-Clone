@@ -54,9 +54,9 @@ public:
                          const std::string& prefix_,
                          int print_lvl,
                          Array<int> &offsets);
-
+   // Returns the iteration count for monitoring the amount of Newton iterations
    virtual int GetIterationCount();
-
+   // Sets the iteration count to 0
    virtual void ResetCounter();
    /// Calculate residual
    virtual void ComputeResiduals(const Vector &r, Vector &vnorm);

@@ -323,7 +323,9 @@ void ParTimeDepBlockNonlinForm::MultBlocked(const BlockVector &bx,
 // Get Gradient
 BlockOperator & ParTimeDepBlockNonlinForm::GetGradient(const Vector &x) const
 {
+   //Return previous Jacobian
    if (hasGrad) return *pBlockGrad;
+   //Time the Building of the Jacobian matrix
    auto Jacobi_start = std::chrono::high_resolution_clock::now();
    if (pBlockGrad == NULL)
    {
@@ -387,10 +389,11 @@ BlockOperator & ParTimeDepBlockNonlinForm::GetGradient(const Vector &x) const
          pBlockGrad->SetBlock(s1, s2, phBlockGrad(s1,s2)->Ptr());
       }
    }
-   //Has to be true to work with the reset
+
    auto Jacobi_end = std::chrono::high_resolution_clock::now();
    auto Jacobi_duration = std::chrono::duration_cast<std::chrono::microseconds>(Jacobi_end - Jacobi_start).count();
    std::cout << std::endl <<"Setup time for new Jacobi:  " << Jacobi_duration/1000000.0 <<  std::endl;
+   // If True: Reuse the Jacobian
    hasGrad = true;
    return *pBlockGrad;
 }

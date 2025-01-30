@@ -73,7 +73,7 @@ SystemResidualMonitor::SystemResidualMonitor(MPI_Comm comm,
    nvar = bOffsets.Size()-1;
    norm0.SetSize(nvar);
 }
-
+// Compute residuals
 void SystemResidualMonitor::ComputeResiduals(const Vector &r, Vector &vnorm)
 {
    for (int i = 0; i < nvar; ++i)
@@ -82,12 +82,13 @@ void SystemResidualMonitor::ComputeResiduals(const Vector &r, Vector &vnorm)
       vnorm[i] = sqrt(InnerProduct(MPI_COMM_WORLD, r_i, r_i));
    }
 }
-
+// Returns the iteration count for monitoring the amount of Newton iterations
 int SystemResidualMonitor::GetIterationCount()
 {return iteration_count;}
-
+// Sets the iteration count to 0 
 void SystemResidualMonitor::ResetCounter()
 {iteration_count = 0;}
+
 // Print residual
 void SystemResidualMonitor::MonitorResidual(int it,
                                             real_t norm,
@@ -99,7 +100,8 @@ void SystemResidualMonitor::MonitorResidual(int it,
    ComputeResiduals(r, vnorm);
    for (int i = 0; i < nvar; ++i)
    {
-      if (it == 0) { norm0[i] = vnorm[i];  Newt_start = std::chrono::high_resolution_clock::now();}
+      if (it == 0) { norm0[i] = vnorm[i];  
+      Newt_start = std::chrono::high_resolution_clock::now();}
    }
 
    bool print = (print_level > 0) &&  ((it%print_level == 0) || final);
